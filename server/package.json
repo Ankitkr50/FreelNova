@@ -1,0 +1,72 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "build": "node -e \"console.log('No build step required for server')\"",
+    "start": "node src/server.js",
+    "start:prod": "node src/server.js",
+    "test": "jest --runInBand --detectOpenHandles",
+    "posttest": "node scripts/clean-test-data.js",
+    "clean:test": "node scripts/clean-test-data.js",
+    "validate:deploy": "node scripts/validate-deployment.js"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.9.0",
+    "@socket.io/redis-adapter": "^8.3.0",
+    "bcryptjs": "^3.0.3",
+    "bullmq": "^6.1.2",
+    "cloudinary": "^2.9.0",
+    "compression": "^1.8.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "express-mongo-sanitize": "^2.2.0",
+    "firebase-admin": "^14.2.0",
+    "google-auth-library": "^10.6.2",
+    "helmet": "^8.1.0",
+    "ioredis": "^5.11.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.0.2",
+    "nodemailer": "^8.0.1",
+    "otplib": "^13.4.1",
+    "pg": "^8.22.0",
+    "prisma": "^7.8.0",
+    "qrcode": "^1.5.4",
+    "razorpay": "^2.9.6",
+    "socket.io": "^4.8.3",
+    "stripe": "^20.3.1",
+    "twilio": "^6.0.2",
+    "ws": "^8.21.1"
+  },
+  "devDependencies": {
+    "jest": "^30.2.0",
+    "mongodb-memory-server": "^11.0.1",
+    "nodemon": "^3.1.14",
+    "supertest": "^7.2.2"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "transformIgnorePatterns": [
+      "/node_modules/(?!(@scure|otplib)/)"
+    ],
+    "setupFiles": [
+      "<rootDir>/tests/setup/env.js"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup/db.js"
+    ]
+  }
+}

@@ -1,0 +1,1254 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ── Enums ────────────────────────────────────────────────────────────────────
+
+enum Role {
+  freelancer
+  recruiter
+  admin
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  FINANCE_ADMIN
+  SUPPORT_STAFF
+  MODERATOR
+  DEVELOPER
+  CUSTOM
+}
+
+enum StaffStatus {
+  ACTIVE
+  SUSPENDED
+  REVOKED
+}
+
+enum ModerationStatus {
+  active
+  suspended
+  blocked
+}
+
+enum ProjectStatus {
+  posted
+  applied
+  selected
+  in_progress
+  completed
+  paid
+  cancelled
+}
+
+enum ProjectModerationStatus {
+  approved
+  flagged
+  removed
+}
+
+enum ApplicationStatus {
+  submitted
+  shortlisted
+  rejected
+  selected
+  withdrawn
+}
+
+enum PaymentStatus {
+  created
+  authorized
+  captured
+  failed
+  refunded
+}
+
+enum EscrowStatus {
+  pending
+  held_in_escrow
+  released
+  disputed
+  refunded
+}
+
+enum PaymentReviewStatus {
+  pending
+  approved
+  flagged
+  rejected
+}
+
+enum DisputeType {
+  payment
+  quality
+  timeline
+  communication
+  other
+}
+
+enum DisputeStatus {
+  open
+  in_review
+  resolved
+  rejected
+  closed
+}
+
+enum DisputePriority {
+  low
+  medium
+  high
+  critical
+}
+
+enum SubscriptionPlan {
+  pro_monthly
+  pro_yearly
+}
+
+enum SubscriptionStatus {
+  created
+  active
+  cancelled
+  expired
+  failed
+  refunded
+}
+
+// ── Models ───────────────────────────────────────────────────────────────────
+
+model User {
+  id                String           @id @default(uuid()) @db.Uuid
+  name              String           @db.VarChar(80)
+  email             String           @unique @db.VarChar(255)
+  username          String?          @unique @db.VarChar(50)
+  userCode          String?          @unique @db.VarChar(30)
+  password          String           @db.VarChar(255)
+  role              Role             @default(freelancer)
+  authProvider      String           @default("local") @db.VarChar(50)
+  googleId          String?          @unique @db.VarChar(255)
+  bio               String           @default("") @db.Text
+  headline          String           @default("") @db.VarChar(200)
+  location          String           @default("") @db.VarChar(200)
+  skills            String[]         @default([])
+  experienceYears   Int              @default(0)
+  education         String           @default("") @db.VarChar(300)
+  experience        String           @default("") @db.Text
+  portfolioLinks    String[]         @default([])
+  hourlyRate        Float            @default(0.0)
+  workExperience    Json             @default("[]")
+  portfolioItems    Json             @default("[]")
+  resumeUrl         String           @default("") @db.VarChar(1000)
+  resumeName        String           @default("") @db.VarChar(255)
+  resumeMimeType    String           @default("") @db.VarChar(100)
+  resumeSize        Int              @default(0)
+  resumePublicId    String           @default("") @db.VarChar(255)
+  resumeUploadedAt  DateTime?        @db.Timestamptz
+  ratingAvg         Float            @default(0.0)
+  ratingCount       Int              @default(0)
+  moderationStatus  ModerationStatus @default(active)
+  moderationNote    String           @default("") @db.VarChar(500)
+  moderatedBy       String?          @db.Uuid
+  moderatedAt       DateTime?        @db.Timestamptz
+  fineAmount        Float            @default(0.0)
+  fineStatus        String           @default("NONE") @db.VarChar(50)
+  fineReason        String           @default("") @db.VarChar(500)
+  isEmailVerified   Boolean          @default(false)
+  emailOtp          String?          @db.VarChar(256)
+  emailOtpExpiresAt DateTime?        @db.Timestamptz
+  emailOtpAttempts  Int              @default(0)
+  refreshToken      String?          @db.VarChar(1000)
+  category          String?          @db.VarChar(50)
+  profileCompleted  Boolean          @default(false)
+  isVerified        Boolean          @default(false)
+  phone             String?          @db.VarChar(20)
+  isPhoneVerified   Boolean          @default(false)
+  phoneOtp          String?          @db.VarChar(256)
+  phoneOtpExpiresAt DateTime?
+  schoolOrCollege   String?          @db.VarChar(255)
+  schoolResult      String?          @db.VarChar(100)
+  schoolIdCard      String?          @db.VarChar(500)
+  aadhaarCard       String?          @db.VarChar(20)
+  aadhaarCardPhoto  String?          @db.VarChar(1000)
+  panCard           String?          @db.VarChar(20)
+  bankAccountNo     String?          @db.VarChar(30)
+  bankIfsc          String?          @db.VarChar(20)
+  bankName          String?          @db.VarChar(100)
+  bankHolderName    String?          @db.VarChar(100)
+  upiId             String?          @db.VarChar(100)
+  companyName       String?          @db.VarChar(255)
+
+  companyId         String?          @db.VarChar(100)
+  isInternational   Boolean          @default(false)
+  passportOrNationalId String?       @db.VarChar(100)
+  passportPhoto     String?          @db.VarChar(1000)
+  taxIdNumber       String?          @db.VarChar(100)
+  swiftBic          String?          @db.VarChar(50)
+  ibanAccountNo     String?          @db.VarChar(100)
+  timezone          String?          @default("UTC") @db.VarChar(50)
+  
+  // RBAC Staff Fields
+  adminRole         AdminRole?
+  customRoleTitle   String?          @db.VarChar(100)
+  adminPermissions  String[]         @default([])
+  staffStatus       StaffStatus      @default(ACTIVE)
+  lastLoginAt       DateTime?        @db.Timestamptz
+  invitedById       String?          @db.Uuid
+
+  // 2FA Security Fields
+  twoFactorEnabled       Boolean     @default(false)
+  twoFactorSecret        String?     @db.VarChar(500)
+  twoFactorRecoveryCodes String[]    @default([])
+
+  createdAt         DateTime         @default(now()) @db.Timestamptz
+  updatedAt         DateTime         @updatedAt @db.Timestamptz
+
+  // Relations
+  moderatedUsers    User[]           @relation("UserModerator")
+  moderator         User?            @relation("UserModerator", fields: [moderatedBy], references: [id], onDelete: SetNull)
+  
+  invitedBy         User?            @relation("StaffInvitedBy", fields: [invitedById], references: [id], onDelete: SetNull)
+  staffInvited      User[]           @relation("StaffInvitedBy")
+  auditLogs         AdminAuditLog[]
+  sentInvitations   StaffInvitation[] @relation("SentStaffInvitations")
+
+  projects          Project[]        @relation("PostedProjects")
+  selectedProjects  Project[]        @relation("SelectedProjects")
+  moderatedProjects Project[]        @relation("ProjectModerator")
+
+  applicationsSent  Application[]    @relation("FreelancerApplications")
+  applicationsRecv  Application[]    @relation("RecruiterApplications")
+
+  paymentsMade      Payment[]        @relation("RecruiterPayments")
+  paymentsRecv      Payment[]        @relation("FreelancerPayments")
+  paymentsReviewed  Payment[]        @relation("PaymentReviewedBy")
+
+  disputesRaised    Dispute[]        @relation("DisputeRaisedBy")
+  disputesAgainst   Dispute[]        @relation("DisputeAgainstUser")
+  disputesAssigned  Dispute[]        @relation("DisputeAssignedAdmin")
+  disputeTimelineEvents DisputeTimeline[]
+
+  notifications     Notification[]
+  reviewsWritten    Review[]         @relation("Reviewer")
+  reviewsReceived   Review[]         @relation("Reviewee")
+  subscriptions     Subscription[]
+  adminSessions     AdminSession[]
+  assignedTickets   SupportTicket[]  @relation("AssignedStaffTickets")
+  createdTickets    SupportTicket[]  @relation("UserSupportTickets")
+  ticketMessages    TicketMessage[]
+  financialLedgers  FinancialLedger[]
+  resolvedSecurityAlerts SecurityAlert[] @relation("ResolvedAlerts")
+  targetedSecurityAlerts SecurityAlert[] @relation("TargetedUserAlerts")
+  chatMessages       ChatMessage[]
+  requestedRevisions ProjectRevision[]      @relation("RevisionRequester")
+  chatAuditActions   ChatAuditLog[]         @relation("AuditLogActor")
+  chatAuditTargets   ChatAuditLog[]         @relation("AuditLogTarget")
+  chatAttachments    ChatAttachment[]
+  submittedChatReports ChatReport[]         @relation("ReportedByUser")
+
+  @@index([role])
+  @@index([adminRole])
+  @@index([staffStatus])
+  @@index([authProvider])
+  @@index([moderationStatus])
+  @@index([userCode])
+}
+
+model Project {
+  id                 String                  @id @default(uuid()) @db.Uuid
+  projectCode        String                  @default("") @db.VarChar(30)
+  title              String                  @db.VarChar(120)
+  description        String                  @db.Text
+  category           String                  @db.VarChar(80)
+  skills             String[]                @default([])
+  budgetMin          Float
+  budgetMax          Float
+  currency           String                  @default("INR") @db.VarChar(10)
+  timelineDays       Int
+  deadline           DateTime                @db.Timestamptz
+  status             ProjectStatus           @default(posted)
+  recruiterId        String                  @db.Uuid
+  selectedFreelancer String?                 @db.Uuid
+  applicationCount   Int                     @default(0)
+  moderationStatus   ProjectModerationStatus @default(approved)
+  moderationNote     String                  @default("") @db.VarChar(500)
+  moderatedBy        String?                 @db.Uuid
+  moderatedAt        DateTime?               @db.Timestamptz
+  createdAt          DateTime                @default(now()) @db.Timestamptz
+  updatedAt          DateTime                @updatedAt @db.Timestamptz
+
+  // Relations
+  recruiter          User                    @relation("PostedProjects", fields: [recruiterId], references: [id], onDelete: Cascade)
+  freelancer         User?                   @relation("SelectedProjects", fields: [selectedFreelancer], references: [id], onDelete: SetNull)
+  moderator          User?                   @relation("ProjectModerator", fields: [moderatedBy], references: [id], onDelete: SetNull)
+
+  applications       Application[]
+  payments           Payment[]
+  disputes           Dispute[]
+  reviews            Review[]
+  conversations      Conversation[]
+  chatMessages       ChatMessage[]
+  revisions          ProjectRevision[]
+  chatAttachments    ChatAttachment[]
+
+  @@index([category])
+  @@index([status])
+  @@index([moderationStatus])
+  @@index([recruiterId])
+}
+
+model Application {
+  id           String            @id @default(uuid()) @db.Uuid
+  projectId    String            @db.Uuid
+  freelancerId String            @db.Uuid
+  recruiterId  String            @db.Uuid
+  proposal     String            @db.Text
+  bidAmount    Float
+  deliveryDays Int
+  status       ApplicationStatus @default(submitted)
+  createdAt    DateTime          @default(now()) @db.Timestamptz
+  updatedAt    DateTime          @updatedAt @db.Timestamptz
+
+  // Relations
+  project      Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  freelancer   User              @relation("FreelancerApplications", fields: [freelancerId], references: [id], onDelete: Cascade)
+  recruiter    User              @relation("RecruiterApplications", fields: [recruiterId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, freelancerId])
+  @@index([projectId])
+  @@index([freelancerId])
+  @@index([recruiterId])
+  @@index([status])
+}
+
+model Payment {
+  id               String              @id @default(uuid()) @db.Uuid
+  projectId        String              @db.Uuid
+  recruiterId      String              @db.Uuid
+  freelancerId     String              @db.Uuid
+  amount           Float
+  currency         String              @default("INR") @db.VarChar(10)
+  gatewayOrderId   String              @unique @db.VarChar(255)
+  gatewayReceipt   String              @default("") @db.VarChar(255)
+  gatewayPaymentId String              @default("") @db.VarChar(255)
+  idempotencyKey   String              @default("") @db.VarChar(255)
+  status           PaymentStatus       @default(created)
+  escrowStatus     EscrowStatus        @default(pending)
+  reviewStatus     PaymentReviewStatus @default(pending)
+  reviewNote       String              @default("") @db.VarChar(500)
+  reviewedBy       String?             @db.Uuid
+  reviewedAt       DateTime?           @db.Timestamptz
+  createdAt        DateTime            @default(now()) @db.Timestamptz
+  updatedAt        DateTime            @updatedAt @db.Timestamptz
+
+  // Relations
+  project          Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  recruiter        User                @relation("RecruiterPayments", fields: [recruiterId], references: [id], onDelete: Cascade)
+  freelancer       User                @relation("FreelancerPayments", fields: [freelancerId], references: [id], onDelete: Cascade)
+  reviewer         User?               @relation("PaymentReviewedBy", fields: [reviewedBy], references: [id], onDelete: SetNull)
+
+  timeline         PaymentTimeline[]
+  disputes         Dispute[]
+
+  @@unique([recruiterId, projectId, idempotencyKey])
+  @@index([projectId])
+  @@index([recruiterId])
+  @@index([freelancerId])
+  @@index([status])
+  @@index([escrowStatus])
+  @@index([reviewStatus])
+}
+
+model PaymentTimeline {
+  id        String   @id @default(uuid()) @db.Uuid
+  paymentId String   @db.Uuid
+  event     String   @db.VarChar(120)
+  status    String   @default("") @db.VarChar(60)
+  note      String   @default("") @db.VarChar(500)
+  metadata  Json     @default("{}")
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  payment   Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+
+  @@index([paymentId])
+}
+
+model PaymentWebhookEvent {
+  eventId          String   @id @db.VarChar(255)
+  eventType        String   @db.VarChar(255)
+  payloadHash      String   @db.VarChar(255)
+  processedAt      DateTime @default(now()) @db.Timestamptz
+  gatewayOrderId   String   @default("") @db.VarChar(255)
+  gatewayPaymentId String   @default("") @db.VarChar(255)
+  signature        String   @default("") @db.Text
+  createdAt        DateTime @default(now()) @db.Timestamptz
+  updatedAt        DateTime @updatedAt @db.Timestamptz
+
+  @@index([gatewayOrderId])
+  @@index([gatewayPaymentId])
+}
+
+model Dispute {
+  id              String          @id @default(uuid()) @db.Uuid
+  projectId       String          @db.Uuid
+  paymentId       String?         @db.Uuid
+  raisedBy        String          @db.Uuid
+  againstUserId   String?         @db.Uuid
+  type            DisputeType
+  reason          String          @db.Text
+  status          DisputeStatus   @default(open)
+  priority        DisputePriority @default(medium)
+  resolutionNote  String          @default("") @db.VarChar(2000)
+  assignedAdminId String?         @db.Uuid
+  resolvedAt      DateTime?       @db.Timestamptz
+  createdAt       DateTime        @default(now()) @db.Timestamptz
+  updatedAt       DateTime        @updatedAt @db.Timestamptz
+
+  // Relations
+  project         Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  payment         Payment?        @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  raiser          User            @relation("DisputeRaisedBy", fields: [raisedBy], references: [id], onDelete: Cascade)
+  againstUser     User?           @relation("DisputeAgainstUser", fields: [againstUserId], references: [id], onDelete: SetNull)
+  admin           User?           @relation("DisputeAssignedAdmin", fields: [assignedAdminId], references: [id], onDelete: SetNull)
+
+  timeline        DisputeTimeline[]
+
+  @@index([projectId])
+  @@index([paymentId])
+  @@index([raisedBy])
+  @@index([againstUserId])
+  @@index([status])
+  @@index([priority])
+}
+
+model DisputeTimeline {
+  id        String   @id @default(uuid()) @db.Uuid
+  disputeId String   @db.Uuid
+  event     String   @db.VarChar(120)
+  note      String   @default("") @db.VarChar(500)
+  actorId   String?  @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz
+
+  dispute   Dispute  @relation(fields: [disputeId], references: [id], onDelete: Cascade)
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([disputeId])
+}
+
+model Notification {
+  id          String   @id @default(uuid()) @db.Uuid
+  recipientId String   @db.Uuid
+  type        String   @db.VarChar(50)
+  title       String   @db.VarChar(150)
+  message     String   @db.VarChar(1000)
+  entityType  String   @default("") @db.VarChar(50)
+  entityId    String?  @db.Uuid
+  metadata    Json     @default("{}")
+  isRead      Boolean  @default(false)
+  readAt      DateTime? @db.Timestamptz
+  createdAt   DateTime @default(now()) @db.Timestamptz
+  updatedAt   DateTime @updatedAt @db.Timestamptz
+
+  // Relations
+  recipient   User     @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@index([recipientId])
+  @@index([type])
+  @@index([isRead])
+}
+
+model Review {
+  id          String   @id @default(uuid()) @db.Uuid
+  projectId   String   @db.Uuid
+  reviewerId  String   @db.Uuid
+  revieweeId  String   @db.Uuid
+  rating      Int
+  comment     String   @db.VarChar(2000)
+  createdAt   DateTime @default(now()) @db.Timestamptz
+  updatedAt   DateTime @updatedAt @db.Timestamptz
+
+  // Relations
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  reviewer    User     @relation("Reviewer", fields: [reviewerId], references: [id], onDelete: Cascade)
+  reviewee    User     @relation("Reviewee", fields: [revieweeId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, reviewerId])
+  @@index([projectId])
+  @@index([reviewerId])
+  @@index([revieweeId])
+}
+
+model Subscription {
+  id               String             @id @default(uuid()) @db.Uuid
+  userId           String             @db.Uuid
+  plan             SubscriptionPlan
+  amount           Float
+  currency         String             @default("INR") @db.VarChar(10)
+  status           SubscriptionStatus @default(created)
+  gatewayOrderId   String             @unique @db.VarChar(255)
+  gatewayPaymentId String             @default("") @db.VarChar(255)
+  gatewaySignature String             @default("") @db.Text
+  idempotencyKey   String             @default("") @db.VarChar(255)
+  expiresAt        DateTime?          @db.Timestamptz
+  createdAt        DateTime           @default(now()) @db.Timestamptz
+  updatedAt        DateTime           @updatedAt @db.Timestamptz
+
+  // Relations
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  timeline         SubscriptionTimeline[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model SubscriptionTimeline {
+  id             String   @id @default(uuid()) @db.Uuid
+  subscriptionId String   @db.Uuid
+  event          String   @db.VarChar(120)
+  status         String   @default("") @db.VarChar(60)
+  note           String   @default("") @db.VarChar(500)
+  metadata       Json     @default("{}")
+  createdAt      DateTime @default(now()) @db.Timestamptz
+
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  @@index([subscriptionId])
+}
+
+model StaffInvitation {
+  id          String      @id @default(uuid()) @db.Uuid
+  email       String      @db.VarChar(255)
+  name        String      @db.VarChar(80)
+  role        AdminRole
+  customRoleTitle String? @db.VarChar(100)
+  permissions String[]    @default([])
+  token       String      @unique @db.VarChar(255)
+  invitedById String      @db.Uuid
+  invitedBy   User        @relation("SentStaffInvitations", fields: [invitedById], references: [id], onDelete: Cascade)
+  expiresAt   DateTime    @db.Timestamptz
+  usedAt      DateTime?   @db.Timestamptz
+  createdAt   DateTime    @default(now()) @db.Timestamptz
+
+  @@index([email])
+  @@index([token])
+}
+
+model AdminAuditLog {
+  id          String    @id @default(uuid()) @db.Uuid
+  adminUserId String?   @db.Uuid
+  adminUser   User?     @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+  action      String    @db.VarChar(100)
+  targetType  String?   @db.VarChar(100)
+  targetId    String?   @db.VarChar(255)
+  metadata    Json?     @default("{}")
+  ipAddress   String?   @db.VarChar(100)
+  userAgent   String?   @db.VarChar(500)
+  createdAt   DateTime  @default(now()) @db.Timestamptz
+
+  @@index([adminUserId])
+  @@index([action])
+  @@index([targetType])
+  @@index([createdAt])
+}
+
+// ── Enterprise Security & Session Management ──────────────────────────────────
+
+model AdminSession {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @db.Uuid
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash    String   @unique @db.VarChar(255)
+  ipAddress    String?  @db.VarChar(100)
+  userAgent    String?  @db.VarChar(500)
+  device       String?  @db.VarChar(100)
+  browser      String?  @db.VarChar(100)
+  os           String?  @db.VarChar(100)
+  location     String?  @db.VarChar(150)
+  isRevoked    Boolean  @default(false)
+  lastActiveAt DateTime @default(now()) @db.Timestamptz
+  createdAt    DateTime @default(now()) @db.Timestamptz
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@index([isRevoked])
+}
+
+// ── Immutable Financial Ledger ────────────────────────────────────────────────
+
+enum LedgerTransactionType {
+  PAYMENT
+  ESCROW_HOLD
+  ESCROW_RELEASE
+  PLATFORM_FEE
+  REFUND
+  WITHDRAWAL
+  ADJUSTMENT
+  REVERSAL
+}
+
+model FinancialLedger {
+  id                String                @id @default(uuid()) @db.Uuid
+  ledgerId          String                @unique @db.VarChar(60)
+  transactionType   LedgerTransactionType
+  grossAmount       Float
+  feeAmount         Float                 @default(0.0)
+  netAmount         Float
+  currency          String                @default("INR") @db.VarChar(10)
+  gatewayOrderId    String?               @db.VarChar(255)
+  gatewayPaymentId  String?               @db.VarChar(255)
+  idempotencyKey    String?               @unique @db.VarChar(255)
+  userId            String?               @db.Uuid
+  user              User?                 @relation(fields: [userId], references: [id], onDelete: SetNull)
+  projectId         String?               @db.Uuid
+  paymentId         String?               @db.Uuid
+  referenceLedgerId String?               @db.VarChar(60)
+  status            String                @default("COMPLETED") @db.VarChar(50)
+  note              String                @default("") @db.VarChar(500)
+  metadata          Json                  @default("{}")
+  createdAt         DateTime              @default(now()) @db.Timestamptz
+
+  @@index([transactionType])
+  @@index([gatewayOrderId])
+  @@index([gatewayPaymentId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ── Support Ticket System ────────────────────────────────────────────────────
+
+enum TicketCategory {
+  PAYMENT
+  ACCOUNT
+  PROJECT
+  WITHDRAWAL
+  REFUND
+  DISPUTE
+  TECHNICAL
+  OTHER
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+  CRITICAL
+}
+
+enum TicketStatus {
+  OPEN
+  ASSIGNED
+  IN_PROGRESS
+  WAITING_FOR_USER
+  ESCALATED
+  RESOLVED
+  CLOSED
+}
+
+model SupportTicket {
+  id           String         @id @default(uuid()) @db.Uuid
+  ticketNumber String         @unique @db.VarChar(30)
+  userId       String         @db.Uuid
+  user         User           @relation("UserSupportTickets", fields: [userId], references: [id], onDelete: Cascade)
+  assignedToId String?        @db.Uuid
+  assignedTo   User?          @relation("AssignedStaffTickets", fields: [assignedToId], references: [id], onDelete: SetNull)
+  category     TicketCategory @default(OTHER)
+  priority     TicketPriority @default(MEDIUM)
+  status       TicketStatus   @default(OPEN)
+  subject      String         @db.VarChar(200)
+  description  String         @db.Text
+  slaDeadline  DateTime?      @db.Timestamptz
+  slaEscalated Boolean        @default(false)
+  slaResolutionTime Int?
+  resolvedAt   DateTime?      @db.Timestamptz
+  closedAt     DateTime?      @db.Timestamptz
+  createdAt    DateTime       @default(now()) @db.Timestamptz
+  updatedAt    DateTime       @updatedAt @db.Timestamptz
+
+  messages     TicketMessage[]
+
+  @@index([userId])
+  @@index([assignedToId])
+  @@index([status])
+  @@index([priority])
+  @@index([category])
+}
+
+model TicketMessage {
+  id             String        @id @default(uuid()) @db.Uuid
+  ticketId       String        @db.Uuid
+  ticket         SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  senderId       String        @db.Uuid
+  sender         User          @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  message        String        @db.Text
+  isInternalNote Boolean       @default(false)
+  attachments    String[]      @default([])
+  createdAt      DateTime      @default(now()) @db.Timestamptz
+
+  @@index([ticketId])
+  @@index([senderId])
+}
+
+// ── Feature Flags Management ─────────────────────────────────────────────────
+
+model FeatureFlag {
+  id          String   @id @default(uuid()) @db.Uuid
+  key         String   @unique @db.VarChar(80)
+  name        String   @db.VarChar(120)
+  description String   @default("") @db.VarChar(300)
+  isEnabled   Boolean  @default(false)
+  targetRoles String[] @default([])
+  metadata    Json     @default("{}")
+  createdAt   DateTime @default(now()) @db.Timestamptz
+  updatedAt   DateTime @updatedAt @db.Timestamptz
+
+  @@index([key])
+  @@index([isEnabled])
+}
+
+// ── Security Alerts & Intrusion Detection ────────────────────────────────────
+
+enum SecurityAlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model SecurityAlert {
+  id           String                @id @default(uuid()) @db.Uuid
+  severity     SecurityAlertSeverity @default(MEDIUM)
+  eventType    String                @db.VarChar(100)
+  title        String                @db.VarChar(200)
+  description  String                @db.Text
+  ipAddress    String?               @db.VarChar(100)
+  userAgent    String?               @db.VarChar(500)
+  targetUserId String?               @db.Uuid
+  targetUser   User?                 @relation("TargetedUserAlerts", fields: [targetUserId], references: [id], onDelete: SetNull)
+  metadata     Json                  @default("{}")
+  isResolved   Boolean               @default(false)
+  resolvedById String?               @db.Uuid
+  resolvedBy   User?                 @relation("ResolvedAlerts", fields: [resolvedById], references: [id], onDelete: SetNull)
+  resolvedAt   DateTime?             @db.Timestamptz
+  createdAt    DateTime              @default(now()) @db.Timestamptz
+
+  @@index([severity])
+  @@index([eventType])
+  @@index([isResolved])
+  @@index([createdAt])
+}
+
+// ── Project Communication OS & Production Chat Models ─────────────────────────
+
+enum MessageType {
+  TEXT
+  FILE
+  IMAGE
+  DOCUMENT
+  SYSTEM
+  LINK
+  REVISION_REQUEST
+  MILESTONE_UPDATE
+}
+
+enum MessageStatus {
+  SENDING
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+enum ChatModerationState {
+  SAFE
+  WARNING
+  FLAGGED
+  BLOCKED
+  UNDER_REVIEW
+}
+
+enum RevisionStatus {
+  OPEN
+  IN_PROGRESS
+  SUBMITTED
+  ACCEPTED
+  REJECTED
+}
+
+model Conversation {
+  id             String        @id @default(uuid()) @db.VarChar(100)
+  conversationKey String?      @unique @db.VarChar(200)
+  projectId      String?       @db.Uuid
+  project        Project?      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type           String        @default("PROJECT") @db.VarChar(50)
+  status         String        @default("active") @db.VarChar(50)
+  participantIds String[]      @default([])
+  lastMessageAt  DateTime      @default(now()) @db.Timestamptz
+  metadata       Json          @default("{}")
+  createdAt      DateTime      @default(now()) @db.Timestamptz
+  updatedAt      DateTime      @updatedAt @db.Timestamptz
+
+  messages       ChatMessage[]
+  revisions      ProjectRevision[]
+  attachments    ChatAttachment[]
+  reports        ChatReport[]
+
+  @@index([projectId])
+  @@index([type])
+  @@index([projectId, type])
+  @@index([lastMessageAt])
+}
+
+model ChatMessage {
+  id               String              @id @default(uuid()) @db.Uuid
+  conversationId   String              @db.VarChar(100)
+  conversation     Conversation        @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  projectId        String?             @db.Uuid
+  project          Project?            @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  senderId         String              @db.Uuid
+  sender           User                @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  content          String              @db.Text
+  messageType      MessageType         @default(TEXT)
+  status           MessageStatus       @default(SENT)
+  clientMessageId  String?             @db.VarChar(100)
+  replyToMessageId String?             @db.Uuid
+  replyToMessage   ChatMessage?        @relation("MessageReplies", fields: [replyToMessageId], references: [id], onDelete: SetNull)
+  replies          ChatMessage[]       @relation("MessageReplies")
+  metadata         Json                @default("{}")
+  moderationState  ChatModerationState @default(SAFE)
+  flagReason       String?             @db.VarChar(300)
+  editedAt         DateTime?           @db.Timestamptz
+  deletedAt        DateTime?           @db.Timestamptz
+  deliveredAt      DateTime?           @db.Timestamptz
+  readAt           DateTime?           @db.Timestamptz
+  createdAt        DateTime            @default(now()) @db.Timestamptz
+  updatedAt        DateTime            @updatedAt @db.Timestamptz
+
+  revisions        ProjectRevision[]
+  attachments      ChatAttachment[]
+  reports          ChatReport[]
+
+  @@index([conversationId])
+  @@index([projectId])
+  @@index([senderId])
+  @@index([status])
+  @@index([moderationState])
+  @@index([createdAt])
+  @@index([conversationId, clientMessageId])
+}
+
+model ProjectRevision {
+  id             String         @id @default(uuid()) @db.Uuid
+  projectId      String         @db.Uuid
+  project        Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  milestoneId    String?        @db.Uuid
+  conversationId String         @db.VarChar(100)
+  conversation   Conversation   @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  messageId      String?        @db.Uuid
+  message        ChatMessage?   @relation(fields: [messageId], references: [id], onDelete: SetNull)
+  issue          String         @db.VarChar(200)
+  description    String         @db.Text
+  priority       String         @default("MEDIUM") @db.VarChar(20)
+  status         RevisionStatus @default(OPEN)
+  requestedById  String         @db.Uuid
+  requestedBy    User           @relation("RevisionRequester", fields: [requestedById], references: [id], onDelete: Cascade)
+  metadata       Json           @default("{}")
+  createdAt      DateTime       @default(now()) @db.Timestamptz
+  updatedAt      DateTime       @updatedAt @db.Timestamptz
+
+  @@index([projectId])
+  @@index([milestoneId])
+  @@index([conversationId])
+  @@index([status])
+}
+
+model ChatAuditLog {
+  id             String   @id @default(uuid()) @db.Uuid
+  action         String   @db.VarChar(100)
+  actorId        String   @db.Uuid
+  actor          User     @relation("AuditLogActor", fields: [actorId], references: [id], onDelete: Cascade)
+  targetUserId   String?  @db.Uuid
+  targetUser     User?    @relation("AuditLogTarget", fields: [targetUserId], references: [id], onDelete: SetNull)
+  conversationId String?  @db.VarChar(100)
+  reason         String?  @db.VarChar(500)
+  metadata       Json     @default("{}")
+  createdAt      DateTime @default(now()) @db.Timestamptz
+
+  @@index([action])
+  @@index([actorId])
+  @@index([targetUserId])
+  @@index([createdAt])
+}
+
+model ChatAttachment {
+  id             String       @id @default(uuid()) @db.Uuid
+  messageId      String?      @db.Uuid
+  message        ChatMessage? @relation(fields: [messageId], references: [id], onDelete: SetNull)
+  conversationId String       @db.VarChar(100)
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  projectId      String?      @db.Uuid
+  project        Project?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  senderId       String       @db.Uuid
+  sender         User         @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  originalName   String       @db.VarChar(255)
+  storedUrl      String       @db.VarChar(1000)
+  mimeType       String       @db.VarChar(100)
+  size           Int          @default(0)
+  metadata       Json         @default("{}")
+  createdAt      DateTime     @default(now()) @db.Timestamptz
+
+  @@index([conversationId])
+  @@index([projectId])
+  @@index([senderId])
+}
+
+model ChatReport {
+  id             String       @id @default(uuid()) @db.Uuid
+  messageId      String?      @db.Uuid
+  message        ChatMessage? @relation(fields: [messageId], references: [id], onDelete: SetNull)
+  conversationId String       @db.VarChar(100)
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  reporterId     String       @db.Uuid
+  reporter       User         @relation("ReportedByUser", fields: [reporterId], references: [id], onDelete: Cascade)
+  reasonCategory String       @db.VarChar(50)
+  details        String       @default("") @db.Text
+  status         String       @default("PENDING") @db.VarChar(20)
+  createdAt      DateTime     @default(now()) @db.Timestamptz
+
+  @@index([conversationId])
+  @@index([reporterId])
+  @@index([status])
+}
+
+model ChatModerationEvent {
+  id             String   @id @default(uuid()) @db.Uuid
+  senderId       String   @db.Uuid
+  receiverId     String?  @db.Uuid
+  conversationId String   @db.VarChar(100)
+  messageId      String?  @db.Uuid
+  contentType    String   @default("TEXT") @db.VarChar(20)
+  category       String   @db.VarChar(50)
+  riskLevel      String   @default("HIGH") @db.VarChar(20)
+  confidence     Float    @default(0.95)
+  action         String   @default("BLOCK") @db.VarChar(20)
+  reason         String   @db.VarChar(300)
+  redactedText   String   @default("") @db.Text
+  status         String   @default("PENDING") @db.VarChar(20)
+  metadata       Json     @default("{}")
+  createdAt      DateTime @default(now()) @db.Timestamptz
+
+  @@index([conversationId])
+  @@index([senderId])
+  @@index([category])
+  @@index([riskLevel])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ── Enterprise Operations & Governance Models ─────────────────────────────
+
+enum ApprovalStatus {
+  PENDING
+  REVIEWING
+  APPROVED
+  REJECTED
+  EXECUTED
+  CANCELLED
+}
+
+enum ApprovalType {
+  REFUND
+  ESCROW_RELEASE
+  LARGE_WITHDRAWAL
+  PAYMENT_ADJUSTMENT
+  FINANCIAL_CORRECTION
+}
+
+model FinanceApproval {
+  id              String         @id @default(uuid()) @db.Uuid
+  requestId       String         @unique @db.VarChar(50)
+  requestType     ApprovalType
+  amount          Float
+  currency        String         @default("INR") @db.VarChar(10)
+  targetType      String         @db.VarChar(50)
+  targetId        String         @db.VarChar(255)
+  requesterId     String         @db.Uuid
+  reviewerId      String?        @db.Uuid
+  approverId      String?        @db.Uuid
+  status          ApprovalStatus @default(PENDING)
+  requiresSuperAdmin Boolean     @default(false)
+  reason          String         @db.Text
+  rejectionReason String?        @db.VarChar(500)
+  metadata        Json           @default("{}")
+  createdAt       DateTime       @default(now()) @db.Timestamptz
+  updatedAt       DateTime       @updatedAt @db.Timestamptz
+
+  @@index([requestId])
+  @@index([status])
+  @@index([requestType])
+  @@index([requesterId])
+}
+
+model KnowledgeArticle {
+  id           String   @id @default(uuid()) @db.Uuid
+  articleId    String   @unique @db.VarChar(30)
+  title        String   @db.VarChar(200)
+  category     String   @db.VarChar(80)
+  content      String   @db.Text
+  authorId     String   @db.Uuid
+  allowedRoles String[] @default([])
+  status       String   @default("PUBLISHED") @db.VarChar(30)
+  version      String   @default("1.0") @db.VarChar(20)
+  tags         String[] @default([])
+  viewsCount   Int      @default(0)
+  createdAt    DateTime @default(now()) @db.Timestamptz
+  updatedAt    DateTime @updatedAt @db.Timestamptz
+
+  @@index([articleId])
+  @@index([category])
+  @@index([status])
+}
+
+model EmployeeHandover {
+  id             String   @id @default(uuid()) @db.Uuid
+  handoverId     String   @unique @db.VarChar(40)
+  fromEmployeeId String   @db.Uuid
+  toEmployeeId   String   @db.Uuid
+  transferredById String  @db.Uuid
+  reason         String   @db.Text
+  status         String   @default("COMPLETED") @db.VarChar(30)
+  itemsSummary   Json     @default("{}")
+  notes          String   @default("") @db.Text
+  createdAt      DateTime @default(now()) @db.Timestamptz
+
+  @@index([handoverId])
+  @@index([fromEmployeeId])
+  @@index([toEmployeeId])
+}
+
+model InternalNote {
+  id             String   @id @default(uuid()) @db.Uuid
+  entityType     String   @db.VarChar(50)
+  entityId       String   @db.VarChar(255)
+  authorId       String   @db.Uuid
+  noteText       String   @db.Text
+  priority       String   @default("NORMAL") @db.VarChar(20)
+  isConfidential Boolean  @default(false)
+  createdAt      DateTime @default(now()) @db.Timestamptz
+  updatedAt      DateTime @updatedAt @db.Timestamptz
+
+  @@index([entityType, entityId])
+  @@index([authorId])
+}
+
+model SensitiveActionApproval {
+  id              String   @id @default(uuid()) @db.Uuid
+  actionCode      String   @db.VarChar(80)
+  requestedById   String   @db.Uuid
+  approvedById    String?  @db.Uuid
+  rejectedById    String?  @db.Uuid
+  targetType      String   @db.VarChar(50)
+  targetId        String   @db.VarChar(255)
+  status          String   @default("PENDING") @db.VarChar(30)
+  beforeState     Json     @default("{}")
+  afterState      Json     @default("{}")
+  reason          String   @db.Text
+  rejectionReason String?  @db.VarChar(500)
+  executedAt      DateTime? @db.Timestamptz
+  createdAt       DateTime @default(now()) @db.Timestamptz
+
+  @@index([actionCode])
+  @@index([status])
+  @@index([requestedById])
+}
+
+model EnterpriseCase {
+  id                 String   @id @default(uuid()) @db.Uuid
+  caseNumber         String   @unique @db.VarChar(40)
+  originType         String   @db.VarChar(50)
+  originId           String?  @db.VarChar(255)
+  title              String   @db.VarChar(200)
+  description        String   @db.Text
+  userId             String?  @db.Uuid
+  assignedEmployeeId String?  @db.Uuid
+  priority           String   @default("MEDIUM") @db.VarChar(20)
+  status             String   @default("OPEN") @db.VarChar(30)
+  evidence           Json     @default("[]")
+  timeline           Json     @default("[]")
+  projectId          String?  @db.Uuid
+  paymentId          String?  @db.Uuid
+  ticketId           String?  @db.Uuid
+  disputeId          String?  @db.Uuid
+  securityAlertId    String?  @db.Uuid
+  createdAt          DateTime @default(now()) @db.Timestamptz
+  updatedAt          DateTime @updatedAt @db.Timestamptz
+
+  @@index([caseNumber])
+  @@index([originType])
+  @@index([status])
+  @@index([priority])
+  @@index([assignedEmployeeId])
+}
+
+model Policy {
+  id             String          @id @default(uuid()) @db.Uuid
+  policyCode     String          @unique @db.VarChar(40)
+  name           String          @db.VarChar(150)
+  category       String          @db.VarChar(80)
+  currentVersion String          @default("1.0") @db.VarChar(20)
+  status         String          @default("ACTIVE") @db.VarChar(30)
+  effectiveDate  DateTime        @default(now()) @db.Timestamptz
+  createdById    String          @db.Uuid
+  updatedById    String          @db.Uuid
+  content        String          @db.Text
+  changeHistory  Json            @default("[]")
+  createdAt      DateTime        @default(now()) @db.Timestamptz
+  updatedAt      DateTime        @updatedAt @db.Timestamptz
+
+  versions       PolicyVersion[]
+
+  @@index([policyCode])
+  @@index([category])
+  @@index([status])
+}
+
+model PolicyVersion {
+  id         String   @id @default(uuid()) @db.Uuid
+  policyId   String   @db.Uuid
+  version    String   @db.VarChar(20)
+  content    String   @db.Text
+  authorId   String   @db.Uuid
+  changeSummary String @default("") @db.VarChar(500)
+  createdAt  DateTime @default(now()) @db.Timestamptz
+
+  policy     Policy   @relation(fields: [policyId], references: [id], onDelete: Cascade)
+
+  @@index([policyId])
+}
+
+// ── Growth & Retention Models ──────────────────────────────────────────────────
+
+model ReferralCode {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @unique @db.Uuid
+  code       String   @unique @db.VarChar(30)
+  clicks     Int      @default(0)
+  createdAt  DateTime @default(now()) @db.Timestamptz
+
+  @@index([code])
+  @@index([userId])
+}
+
+model UserReferral {
+  id              String    @id @default(uuid()) @db.Uuid
+  referrerId      String    @db.Uuid
+  referredUserId  String    @unique @db.Uuid
+  referralCode    String    @db.VarChar(30)
+  status          String    @default("PENDING") @db.VarChar(30)
+  rewardConnects  Int       @default(20)
+  ambassadorTier  String    @default("RISING") @db.VarChar(30)
+  createdAt       DateTime  @default(now()) @db.Timestamptz
+  rewardedAt      DateTime? @db.Timestamptz
+
+  @@index([referrerId])
+  @@index([referredUserId])
+  @@index([referralCode])
+  @@index([status])
+}
+
+model UserRewardCredit {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @unique @db.Uuid
+  connects     Int      @default(50)
+  totalEarned  Int      @default(50)
+  totalSpent   Int      @default(0)
+  rewardTier   String   @default("STANDARD") @db.VarChar(30)
+  updatedAt    DateTime @updatedAt @db.Timestamptz
+
+  @@index([userId])
+}
+
+model RewardLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @db.Uuid
+  action      String   @db.VarChar(50)
+  connects    Int
+  note        String   @default("") @db.VarChar(255)
+  createdAt   DateTime @default(now()) @db.Timestamptz
+
+  @@index([userId])
+  @@index([action])
+}
+
+model CommunityPost {
+  id            String   @id @default(uuid()) @db.Uuid
+  authorId      String   @db.Uuid
+  title         String   @db.VarChar(200)
+  content       String   @db.Text
+  category      String   @default("General") @db.VarChar(50)
+  tags          String[] @default([])
+  viewsCount    Int      @default(0)
+  likesCount    Int      @default(0)
+  commentsCount Int      @default(0)
+  status        String   @default("APPROVED") @db.VarChar(30)
+  createdAt     DateTime @default(now()) @db.Timestamptz
+  updatedAt     DateTime @updatedAt @db.Timestamptz
+
+  comments      CommunityComment[]
+  reactions     CommunityReaction[]
+
+  @@index([authorId])
+  @@index([category])
+  @@index([status])
+}
+
+model CommunityComment {
+  id         String   @id @default(uuid()) @db.Uuid
+  postId     String   @db.Uuid
+  authorId   String   @db.Uuid
+  content    String   @db.Text
+  createdAt  DateTime @default(now()) @db.Timestamptz
+
+  post       CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+  @@index([authorId])
+}
+
+model CommunityReaction {
+  id         String   @id @default(uuid()) @db.Uuid
+  postId     String   @db.Uuid
+  userId     String   @db.Uuid
+  type       String   @default("LIKE") @db.VarChar(20)
+  createdAt  DateTime @default(now()) @db.Timestamptz
+
+  post       CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId, type])
+  @@index([postId])
+  @@index([userId])
+}
+
+model UserAchievement {
+  id              String   @id @default(uuid()) @db.Uuid
+  userId          String   @db.Uuid
+  achievementCode String   @db.VarChar(50)
+  title           String   @db.VarChar(100)
+  description     String   @db.VarChar(255)
+  badgeIcon       String   @db.VarChar(100)
+  unlockedAt      DateTime @default(now()) @db.Timestamptz
+
+  @@unique([userId, achievementCode])
+  @@index([userId])
+}
+
+
+

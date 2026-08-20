@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+Allow: /home
+Allow: /projects
+Allow: /talent
+Allow: /freelnova-pro
+
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /chat
+Disallow: /chat/*
+Disallow: /messages
+Disallow: /vault
+Disallow: /enterprise
+Disallow: /enterprise/*
+Disallow: /api/*
+
+Sitemap: https://freelnova.com/sitemap.xml

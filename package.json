@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+    "test": "npm --prefix server test"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.9.0",
+    "concurrently": "^9.2.1"
+  }
+}
