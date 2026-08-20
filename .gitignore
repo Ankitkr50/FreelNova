@@ -9,13 +9,15 @@ build/
 
 # Environment files and secrets (CRITICAL)
 .env
-.env.local
-.env.production
-.env.development
+.env.*
+.env.example
 **/.env
-**/.env.local
-**/.env.production
-**/.env.development
+**/.env.*
+**/.env.example
+
+# Documentation & Internal Docs
+docs/
+**/docs/
 
 # Logs & Runtime Data
 *.log
