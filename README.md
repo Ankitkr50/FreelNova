@@ -1,6 +1,6 @@
 # FreelNova
 
-MERN freelance marketplace platform (Fiverr-style) with:
+MERN freelance marketplace platform with:
 - role-based auth (freelancer/recruiter/admin)
 - project posting, apply/select workflow
 - escrow-style payments with webhook verification
@@ -8,7 +8,7 @@ MERN freelance marketplace platform (Fiverr-style) with:
 
 ## Repo Structure
 - `client/` React + Vite + Tailwind
-- `server/` Node + Express + MongoDB
+- `server/` Node + Express + PostgreSQL
 
 ## Quick Start
 
