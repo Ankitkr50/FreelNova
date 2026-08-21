@@ -16,7 +16,8 @@ const { setupSocketIO } = require("./socket/socketServer");
 //
 // In development, skip clustering for easier debugging (single process).
 // On Railway/Render, NODE_ENV=production, so clustering kicks in automatically.
-const NUM_WORKERS = env.nodeEnv === "production" ? os.cpus().length : 1;
+const maxWorkers = parseInt(process.env.WEB_CONCURRENCY || "1", 10);
+const NUM_WORKERS = env.nodeEnv === "production" ? Math.min(os.cpus().length, maxWorkers) : 1;
 
 if (cluster.isPrimary && NUM_WORKERS > 1) {
   logger.info("cluster_primary_start", {
