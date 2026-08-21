@@ -2,7 +2,8 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { io } from "socket.io-client";
 import { useAuth } from "./useAuth";
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || window.location.origin;
+const rawSocketUrl = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_BASE_URL || window.location.origin;
+const SOCKET_URL = rawSocketUrl.replace(/\/api\/?$/, "");
 
 let globalSocket = null;
 

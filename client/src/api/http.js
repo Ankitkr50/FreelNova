@@ -1,8 +1,11 @@
 import axios from "axios";
 import { clearAuthSession, getAccessToken, getRefreshToken, setAuthSession } from "../utils/authStorage.js";
 
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+const baseURL = rawBaseUrl.endsWith("/api") ? rawBaseUrl : `${rawBaseUrl.replace(/\/+$/, "")}/api`;
+
 const http = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL,
   withCredentials: true,
   timeout: 15000,
 });
