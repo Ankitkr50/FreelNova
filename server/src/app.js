@@ -46,10 +46,16 @@ app.use(
   cors({
     origin(origin, callback) {
       if (!origin) {
-        return callback(null, env.nodeEnv !== "production");
+        return callback(null, true);
       }
 
-      if (allowedOrigins.includes(origin) || origin.endsWith(".trycloudflare.com")) {
+      if (
+        allowedOrigins.includes("*") ||
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app") ||
+        origin.endsWith(".onrender.com") ||
+        origin.endsWith(".trycloudflare.com")
+      ) {
         return callback(null, true);
       }
 

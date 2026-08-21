@@ -60,6 +60,35 @@ if (cluster.isPrimary && NUM_WORKERS > 1) {
 
       await connectDatabase();
 
+      // Ensure primary Super Admin account exists in production database
+      try {
+        const adminEmail = "fn.freelnova@gmail.com";
+        const existingAdmin = await prisma.user.findUnique({
+          where: { email: adminEmail },
+        });
+        if (!existingAdmin) {
+          const bcrypt = require("bcryptjs");
+          const hashedPassword = await bcrypt.hash("Admin@123456", 10);
+          await prisma.user.create({
+            data: {
+              name: "Super Admin",
+              email: adminEmail,
+              userCode: "AID00000001",
+              username: "fn.freelnova@gmail.com",
+              password: hashedPassword,
+              role: "admin",
+              adminRole: "SUPER_ADMIN",
+              isEmailVerified: true,
+              profileCompleted: true,
+              moderationStatus: "active",
+            },
+          });
+          logger.info("super_admin_auto_seeded", { email: adminEmail });
+        }
+      } catch (seedErr) {
+        logger.warn("super_admin_seed_warning", { message: seedErr.message });
+      }
+
       const server = app.listen(env.port, () => {
         if (env.nodeEnv === "production") {
           logger.info("server_listening", {
