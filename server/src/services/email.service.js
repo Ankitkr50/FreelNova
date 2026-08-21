@@ -12,8 +12,7 @@ const isEmailConfigured = () =>
     env.smtpHost &&
       env.smtpPort &&
       env.smtpUser &&
-      env.smtpPass &&
-      hasNonDefaultFromAddress()
+      env.smtpPass
   );
 
 const buildTransportOptions = () => ({
@@ -96,14 +95,18 @@ const sendEmail = async ({ to, subject, html, text }) => {
     if (!env.smtpPort) missing.push("SMTP_PORT");
     if (!env.smtpUser) missing.push("SMTP_USER");
     if (!env.smtpPass) missing.push("SMTP_PASS");
-    if (!hasNonDefaultFromAddress()) missing.push("EMAIL_FROM");
     throw new Error(`Email is not configured. Missing or invalid: ${missing.join(", ")}`);
   }
 
   try {
     await verifyTransporter();
+    const fromAddress =
+      env.emailFrom && env.emailFrom !== "noreply@freelnova.local"
+        ? env.emailFrom
+        : `FreelNova <${env.smtpUser}>`;
+
     await getTransporter().sendMail({
-      from: env.emailFrom,
+      from: fromAddress,
       to,
       subject,
       text,
