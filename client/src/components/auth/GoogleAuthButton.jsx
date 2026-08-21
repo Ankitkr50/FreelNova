@@ -48,21 +48,8 @@ function GoogleAuthButton({ text = "signin_with", onCredential, disabled = false
           text,
         });
         setState(1);
-
-        // Detect the 403 origin error from Google's iframe AFTER render.
-        // The iframe posts a message when it fails to load due to origin mismatch.
-        const onMessage = (e) => {
-          if (
-            typeof e.data === "string" &&
-            (e.data.includes("origin") || e.data.includes("not allowed"))
-          ) {
-            setState(2);
-          }
-        };
-        window.addEventListener("message", onMessage);
-        return () => window.removeEventListener("message", onMessage);
-      } catch {
-        setState(4);
+      } catch (err) {
+        console.error("Google Auth Button Error:", err);
       }
     };
 
@@ -71,29 +58,20 @@ function GoogleAuthButton({ text = "signin_with", onCredential, disabled = false
       return;
     }
 
-    // Script already being loaded by another instance — poll for it.
-    if (document.querySelector('script[src*="accounts.google.com/gsi"]')) {
-      const poll = setInterval(() => {
-        if (window.google?.accounts?.id) { clearInterval(poll); renderButton(); }
-        if (gsiLoadFailed) { clearInterval(poll); setState(4); }
-      }, 100);
-      return () => clearInterval(poll);
-    }
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts++;
+      if (window.google?.accounts?.id) {
+        clearInterval(interval);
+        renderButton();
+      } else if (attempts > 25) {
+        clearInterval(interval);
+        gsiLoadFailed = true;
+        setState(4);
+      }
+    }, 200);
 
-    // First mount — inject GSI script.
-    const script = document.createElement("script");
-    script.src = "https://accounts.google.com/gsi/client";
-    script.async = true;
-    script.defer = true;
-    script.onload = renderButton;
-    script.onerror = () => {
-      gsiLoadFailed = true;
-      setState(4);
-    };
-    document.head.appendChild(script);
-
-    return () => { script.onload = null; script.onerror = null; };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => clearInterval(interval);
   }, [clientId, disabled, text]);
 
   // ── No client ID configured ───────────────────────────────────────────────
