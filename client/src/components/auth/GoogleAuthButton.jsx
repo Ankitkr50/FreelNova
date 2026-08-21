@@ -7,7 +7,7 @@ let activeOnCredential = null;
 
 function GoogleAuthButton({ text = "signin_with", onCredential, disabled = false }) {
   const containerRef = useRef(null);
-  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "343592841110-om5isqgkspt4e7bou0n5uoodkmj02n8g.apps.googleusercontent.com";
 
   // 0 = loading, 1 = ready, 2 = origin-error, 3 = no-client-id, 4 = load-failed
   const [state, setState] = useState(() => {
