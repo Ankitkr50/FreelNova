@@ -59,6 +59,16 @@ if (cluster.isPrimary && NUM_WORKERS > 1) {
         });
       }
 
+      if (env.nodeEnv === "production") {
+        try {
+          const { execSync } = require("child_process");
+          logger.info("syncing_prisma_schema_to_db");
+          execSync("npx prisma db push --accept-data-loss", { stdio: "inherit" });
+        } catch (syncErr) {
+          logger.warn("schema_sync_warn", { message: syncErr.message });
+        }
+      }
+
       await connectDatabase();
 
       // Ensure primary Super Admin account exists in production database
