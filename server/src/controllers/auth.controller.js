@@ -682,22 +682,24 @@ const sendLoginOtp = catchAsync(async (req, res) => {
     throw new ApiError(400, "Email and OTP code are required.");
   }
 
+  const inputStr = String(email).toLowerCase().trim();
   const existingUser = await prisma.user.findFirst({
     where: {
       OR: [
-        { email: { equals: email.toLowerCase().trim(), mode: "insensitive" } },
-        { username: { equals: email.toLowerCase().trim(), mode: "insensitive" } },
-        { userCode: { equals: email.toUpperCase().trim(), mode: "insensitive" } },
+        { email: { equals: inputStr, mode: "insensitive" } },
+        { username: { equals: inputStr.replace(/^@/, ""), mode: "insensitive" } },
+        { userCode: { equals: inputStr.toUpperCase(), mode: "insensitive" } },
       ],
     },
-    select: { name: true, username: true, userCode: true },
+    select: { email: true, name: true, username: true, userCode: true },
   });
 
+  const targetEmail = existingUser?.email || inputStr;
   const recipientDisplayName = existingUser?.name || existingUser?.username || existingUser?.userCode || "FreelNova Member";
 
   try {
     await sendEmail({
-      to: email,
+      to: targetEmail,
       subject: "FreelNova Secure Login Verification Code",
       text: `Your 6-digit Login verification code is: ${otp}`,
       html: buildFreelNovaEmailHtml({
@@ -711,15 +713,10 @@ const sendLoginOtp = catchAsync(async (req, res) => {
         securityNote: "This code is valid for single use. If you did not request this login attempt, please secure your credentials immediately.",
       }),
     });
-  } catch (error) {
-    console.log(`\n[SMTP Offline Fallback] Failed to send login OTP email via SMTP: ${error.message}`);
+    logger.info("send_login_otp_success", { targetEmail });
+  } catch (emailErr) {
+    logger.error("send_login_otp_failed", { targetEmail, error: emailErr.message });
   }
-
-  // Always log mock details to terminal log for sandbox testing
-  console.log(`\n\n======================================================`);
-  console.log(`[SANDBOX MOCK SMTP ACTIVE] Login OTP Code generated for ${email}`);
-  console.log(`OTP Code: ${otp} (Enter ${otp} or bypass 123456 to verify)`);
-  console.log(`======================================================\n\n`);
 
   res.status(200).json({
     success: true,
