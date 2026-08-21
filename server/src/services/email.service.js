@@ -27,6 +27,7 @@ const buildTransportOptions = () => ({
   greetingTimeout: 15_000,
   socketTimeout: 20_000,
   tls: {
+    rejectUnauthorized: false,
     servername: env.smtpHost,
   },
 });
