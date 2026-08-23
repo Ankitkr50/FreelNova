@@ -708,26 +708,23 @@ const sendLoginOtp = catchAsync(async (req, res) => {
   const targetEmail = existingUser?.email || inputStr;
   const recipientDisplayName = existingUser?.name || existingUser?.username || existingUser?.userCode || "FreelNova Member";
 
-  try {
-    await sendEmail({
-      to: targetEmail,
-      subject: "FreelNova Secure Login Verification Code",
-      text: `Your 6-digit Login verification code is: ${otp}`,
-      html: buildFreelNovaEmailHtml({
-        headline: "Account Security Verification",
-        recipientName: recipientDisplayName,
-        introText: "You are attempting to log in to your FreelNova account. Please use the following secure 6-digit verification code to complete your login:",
-        codeLabel: "LOGIN OTP CODE",
-        codeValue: otp,
-        copyInstruction: "Press and hold (phone) or triple-click (computer) the code above to copy it.",
-        whatsNextText: "Enter this OTP on the login prompt to complete your sign-in session securely.",
-        securityNote: "This code is valid for single use. If you did not request this login attempt, please secure your credentials immediately.",
-      }),
-    });
-    logger.info("send_login_otp_success", { targetEmail });
-  } catch (emailErr) {
-    logger.error("send_login_otp_failed", { targetEmail, error: emailErr.message });
-  }
+  sendEmail({
+    to: targetEmail,
+    subject: "FreelNova Secure Login Verification Code",
+    text: `Your 6-digit Login verification code is: ${otp}`,
+    html: buildFreelNovaEmailHtml({
+      headline: "Account Security Verification",
+      recipientName: recipientDisplayName,
+      introText: "You are attempting to log in to your FreelNova account. Please use the following secure 6-digit verification code to complete your login:",
+      codeLabel: "LOGIN OTP CODE",
+      codeValue: otp,
+      copyInstruction: "Press and hold (phone) or triple-click (computer) the code above to copy it.",
+      whatsNextText: "Enter this OTP on the login prompt to complete your sign-in session securely.",
+      securityNote: "This code is valid for single use. If you did not request this login attempt, please secure your credentials immediately.",
+    }),
+  })
+    .then(() => logger.info("send_login_otp_success", { targetEmail }))
+    .catch((emailErr) => logger.error("send_login_otp_failed", { targetEmail, error: emailErr.message }));
 
   res.status(200).json({
     success: true,
