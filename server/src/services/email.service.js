@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
 const env = require("../config/env");
+const https = require("https");
 
 let transporter = null;
 
@@ -7,24 +8,114 @@ const getTransporter = () => {
   if (!transporter) {
     const user = env.smtpUser || "freelnova07@gmail.com";
     const pass = env.smtpPass || "llzicgisyslrrncd";
+    const host = env.smtpHost || "smtp.gmail.com";
+    const port = env.smtpPort || (host === "smtp.gmail.com" ? 587 : 465);
 
-    if (env.smtpHost && env.smtpHost !== "smtp.gmail.com") {
-      transporter = nodemailer.createTransport({
-        host: env.smtpHost,
-        port: env.smtpPort || 465,
-        secure: env.smtpSecure !== undefined ? env.smtpSecure : true,
-        auth: { user, pass },
-        tls: { rejectUnauthorized: false },
-      });
-    } else {
-      transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: { user, pass },
-        tls: { rejectUnauthorized: false },
-      });
-    }
+    transporter = nodemailer.createTransport({
+      host,
+      port,
+      secure: port === 465,
+      auth: { user, pass },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
+      tls: {
+        rejectUnauthorized: false,
+        ciphers: "SSLv3",
+      },
+    });
   }
   return transporter;
+};
+
+// ── HTTPS Dispatch for Cloud Providers (Bypasses Gmail SMTP Datacenter Blocks) ──
+const sendViaResend = (apiKey, { from, to, subject, html, text }) => {
+  return new Promise((resolve, reject) => {
+    const payload = JSON.stringify({
+      from: from || "FreelNova <onboarding@resend.dev>",
+      to: [to],
+      subject,
+      html,
+      text,
+    });
+
+    const req = https.request(
+      "https://api.resend.com/emails",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(payload),
+        },
+        timeout: 10000,
+      },
+      (res) => {
+        let data = "";
+        res.on("data", (chunk) => (data += chunk));
+        res.on("end", () => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve(JSON.parse(data));
+          } else {
+            reject(new Error(`Resend API HTTP ${res.statusCode}: ${data}`));
+          }
+        });
+      }
+    );
+
+    req.on("error", reject);
+    req.on("timeout", () => {
+      req.destroy();
+      reject(new Error("Resend API Request Timeout"));
+    });
+    req.write(payload);
+    req.end();
+  });
+};
+
+const sendViaBrevo = (apiKey, { from, to, subject, html, text }) => {
+  return new Promise((resolve, reject) => {
+    const senderEmail = env.smtpUser || "freelnova07@gmail.com";
+    const payload = JSON.stringify({
+      sender: { name: "FreelNova", email: senderEmail },
+      to: [{ email: to }],
+      subject,
+      htmlContent: html,
+      textContent: text,
+    });
+
+    const req = https.request(
+      "https://api.brevo.com/v3/smtp/email",
+      {
+        method: "POST",
+        headers: {
+          "api-key": apiKey,
+          "Content-Type": "application/json",
+          "Content-Length": Buffer.byteLength(payload),
+        },
+        timeout: 10000,
+      },
+      (res) => {
+        let data = "";
+        res.on("data", (chunk) => (data += chunk));
+        res.on("end", () => {
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve(JSON.parse(data));
+          } else {
+            reject(new Error(`Brevo API HTTP ${res.statusCode}: ${data}`));
+          }
+        });
+      }
+    );
+
+    req.on("error", reject);
+    req.on("timeout", () => {
+      req.destroy();
+      reject(new Error("Brevo API Request Timeout"));
+    });
+    req.write(payload);
+    req.end();
+  });
 };
 
 const sendEmail = async ({ to, subject, html, text }) => {
@@ -36,6 +127,42 @@ const sendEmail = async ({ to, subject, html, text }) => {
 
   const fromAddress = env.emailFrom || "FreelNova <freelnova07@gmail.com>";
 
+  // 1. Try Resend HTTP API if key exists
+  if (process.env.RESEND_API_KEY) {
+    try {
+      const resendRes = await sendViaResend(process.env.RESEND_API_KEY, {
+        from: fromAddress,
+        to: targetEmail,
+        subject,
+        html,
+        text,
+      });
+      console.log(`[RESEND SUCCESS] Delivered OTP email to ${targetEmail} | ID: ${resendRes.id}`);
+      return { success: true, messageId: resendRes.id };
+    } catch (rErr) {
+      console.error(`[RESEND ERROR] Resend dispatch failed, falling back: ${rErr.message}`);
+    }
+  }
+
+  // 2. Try Brevo HTTP API if key exists
+  if (process.env.BREVO_API_KEY || process.env.SIB_API_KEY) {
+    const key = process.env.BREVO_API_KEY || process.env.SIB_API_KEY;
+    try {
+      const brevoRes = await sendViaBrevo(key, {
+        from: fromAddress,
+        to: targetEmail,
+        subject,
+        html,
+        text,
+      });
+      console.log(`[BREVO SUCCESS] Delivered OTP email to ${targetEmail} | ID: ${brevoRes.messageId}`);
+      return { success: true, messageId: brevoRes.messageId };
+    } catch (bErr) {
+      console.error(`[BREVO ERROR] Brevo dispatch failed, falling back: ${bErr.message}`);
+    }
+  }
+
+  // 3. Nodemailer SMTP Transport
   try {
     const info = await getTransporter().sendMail({
       from: fromAddress,
