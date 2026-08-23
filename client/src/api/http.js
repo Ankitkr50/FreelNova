@@ -1,8 +1,8 @@
 import axios from "axios";
 import { clearAuthSession, getAccessToken, getRefreshToken, setAuthSession } from "../utils/authStorage.js";
 
-const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
-const baseURL = rawBaseUrl.endsWith("/api") ? rawBaseUrl : `${rawBaseUrl.replace(/\/+$/, "")}/api`;
+const rawBaseUrl = (import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api").trim().replace(/\/+$/, "");
+const baseURL = rawBaseUrl.endsWith("/api") ? rawBaseUrl : `${rawBaseUrl}/api`;
 
 const http = axios.create({
   baseURL,
@@ -17,8 +17,8 @@ http.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
-  // Prevent double /api/api/ pathing
-  if (config.url && config.url.startsWith("/api/") && baseURL.endsWith("/api")) {
+  // Prevent double /api/api/ pathing if config.url starts with /api/
+  if (config.url && config.url.startsWith("/api/")) {
     config.url = config.url.replace(/^\/api/, "");
   }
 
