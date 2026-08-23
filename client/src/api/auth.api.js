@@ -13,6 +13,7 @@ const normalizeAuthResponse = (response) => {
       accessToken: data?.accessToken || root?.accessToken || "",
       refreshToken: data?.refreshToken || root?.refreshToken || "",
       user: data?.user || root?.user || null,
+      serverOtp: data?.serverOtp || root?.serverOtp || "",
     },
   };
 };
