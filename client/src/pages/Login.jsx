@@ -144,17 +144,19 @@ function Login() {
         role: form.role,
       };
 
-      // Generate a 6-digit login OTP code and send to their email
-      const mockCode = String(Math.floor(100000 + Math.random() * 900000));
+      // Use server-generated OTP if provided, otherwise fallback to local code
+      const mockCode = data.serverOtp || String(Math.floor(100000 + Math.random() * 900000));
       const targetEmail = user?.email || form.email;
       setGeneratedOtp(mockCode);
       setPendingLogin({ token, user, refreshToken, message: data.message });
       setShowOtp(true);
       setStatus({ type: "success", text: `Multi-factor authentication active. OTP sent to ${targetEmail}` });
 
-      authApi.sendLoginOtp({ email: targetEmail, otp: mockCode }).catch((err) => {
-        console.error("Failed to send OTP email:", err);
-      });
+      if (!data.serverOtp) {
+        authApi.sendLoginOtp({ email: targetEmail, otp: mockCode }).catch((err) => {
+          console.error("Failed to send OTP email:", err);
+        });
+      }
     },
     onError: (error) => {
       setStatus({ type: "error", text: error?.response?.data?.message || "Login failed. Please try again." });

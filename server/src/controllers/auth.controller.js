@@ -331,6 +331,24 @@ const login = catchAsync(async (req, res) => {
     }
   }
 
+  // Generate server-side login OTP and dispatch real email directly
+  const serverOtp = String(crypto.randomInt(100_000, 1_000_000));
+  sendEmail({
+    to: user.email,
+    subject: "FreelNova Secure Login Verification Code",
+    text: `Your 6-digit Login verification code is: ${serverOtp}`,
+    html: buildFreelNovaEmailHtml({
+      headline: "Account Security Verification",
+      recipientName: user.name || user.username || "FreelNova Member",
+      introText: "You are attempting to log in to your FreelNova account. Please use the following secure 6-digit verification code to complete your login session:",
+      codeLabel: "LOGIN OTP CODE",
+      codeValue: serverOtp,
+      copyInstruction: "Press and hold (phone) or triple-click (computer) the code above to copy it.",
+      whatsNextText: "Enter this OTP on the login prompt to complete your sign-in session securely.",
+      securityNote: "This code is valid for single use. If you did not request this login attempt, please secure your credentials immediately.",
+    }),
+  }).catch((err) => logger.error("server_login_otp_send_failed", { error: err.message }));
+
   res.status(200).json({
     success: true,
     message: "Login successful",
@@ -338,6 +356,7 @@ const login = catchAsync(async (req, res) => {
       user: createAuthPayload(user),
       accessToken,
       refreshToken,
+      serverOtp,
     },
   });
 
