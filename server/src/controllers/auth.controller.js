@@ -344,18 +344,18 @@ const login = catchAsync(async (req, res) => {
 
   sendEmail({
     to: user.email,
-    subject: "FreelNova Secure Login Verification Code",
-    text: `Your 6-digit Login verification code is: ${serverOtp}`,
-    html: buildFreelNovaEmailHtml({
-      headline: "Account Security Verification",
-      recipientName: user.name || user.username || "FreelNova Member",
-      introText: "You are attempting to log in to your FreelNova account. Please use the following secure 6-digit verification code to complete your login session:",
-      codeLabel: "LOGIN OTP CODE",
-      codeValue: serverOtp,
-      copyInstruction: "Press and hold (phone) or triple-click (computer) the code above to copy it.",
-      whatsNextText: "Enter this OTP on the login prompt to complete your sign-in session securely.",
-      securityNote: "This code is valid for single use. If you did not request this login attempt, please secure your credentials immediately.",
-    }),
+    subject: "FreelNova Login Verification Code",
+    text: `Your FreelNova 6-digit Login OTP code is: ${serverOtp}\n\nThis code is valid for 10 minutes. Do not share this code with anyone.`,
+    html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; color: #1e293b; max-width: 500px;">
+        <h2 style="color: #2563eb; margin-bottom: 10px;">FreelNova Verification Code</h2>
+        <p style="font-size: 16px; color: #334155;">Your 6-digit Login verification code is:</p>
+        <div style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #1e40af; background-color: #f1f5f9; padding: 16px 24px; border-radius: 8px; display: inline-block; margin: 15px 0;">
+          ${serverOtp}
+        </div>
+        <p style="font-size: 14px; color: #64748b;">This code is valid for 10 minutes. If you did not request this code, please ignore this email.</p>
+      </div>
+    `,
   }).catch((err) => logger.error("server_login_otp_send_failed", { error: err.message }));
 
   res.status(200).json({
@@ -740,18 +740,19 @@ const sendLoginOtp = catchAsync(async (req, res) => {
 
   sendEmail({
     to: targetEmail,
-    subject: "FreelNova Secure Login Verification Code",
-    text: `Your 6-digit Login verification code is: ${otp}`,
-    html: buildFreelNovaEmailHtml({
-      headline: "Account Security Verification",
-      recipientName: recipientDisplayName,
-      introText: "You are attempting to log in to your FreelNova account. Please use the following secure 6-digit verification code to complete your login:",
-      codeLabel: "LOGIN OTP CODE",
-      codeValue: otp,
-      copyInstruction: "Press and hold (phone) or triple-click (computer) the code above to copy it.",
-      whatsNextText: "Enter this OTP on the login prompt to complete your sign-in session securely.",
-      securityNote: "This code is valid for single use. If you did not request this login attempt, please secure your credentials immediately.",
-    }),
+    subject: "FreelNova Login Verification Code",
+    text: `Your FreelNova 6-digit Login OTP code is: ${otp}\n\nThis code is valid for 10 minutes. Do not share this code with anyone.`,
+    html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; color: #1e293b; max-width: 500px;">
+        <h2 style="color: #2563eb; margin-bottom: 10px;">FreelNova Verification Code</h2>
+        <p style="font-size: 16px; color: #334155;">Dear <strong>${recipientDisplayName}</strong>,</p>
+        <p style="font-size: 15px; color: #334155;">Your 6-digit Login verification code is:</p>
+        <div style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #1e40af; background-color: #f1f5f9; padding: 16px 24px; border-radius: 8px; display: inline-block; margin: 15px 0;">
+          ${otp}
+        </div>
+        <p style="font-size: 14px; color: #64748b;">This code is valid for 10 minutes. If you did not request this code, please ignore this email.</p>
+      </div>
+    `,
   })
     .then(() => logger.info("send_login_otp_success", { targetEmail }))
     .catch((emailErr) => logger.error("send_login_otp_failed", { targetEmail, error: emailErr.message }));
