@@ -150,7 +150,10 @@ function Login() {
       setGeneratedOtp(mockCode);
       setPendingLogin({ token, user, refreshToken, message: data.message });
       setShowOtp(true);
-      setStatus({ type: "success", text: `Multi-factor authentication active. OTP sent to ${targetEmail}` });
+      setStatus({ 
+        type: "success", 
+        text: `Security OTP sent to ${targetEmail} (Verification Code: ${mockCode})` 
+      });
 
       if (!data.serverOtp) {
         authApi.sendLoginOtp({ email: targetEmail, otp: mockCode }).catch((err) => {
@@ -178,8 +181,7 @@ function Login() {
 
   const validate = () => {
     const nextErrors = {};
-    if (!form.email.trim()) nextErrors.email = "Email is required.";
-    else if (!emailRegex.test(form.email)) nextErrors.email = "Enter a valid email.";
+    if (!form.email.trim()) nextErrors.email = "Email, Username, or User ID is required.";
     if (!form.password) nextErrors.password = "Password is required.";
     else if (form.password.length < 6) nextErrors.password = "Minimum 6 characters.";
     if (!["freelancer", "recruiter", "admin"].includes(form.role)) nextErrors.role = "Select a role.";
