@@ -152,7 +152,7 @@ function Login() {
       setShowOtp(true);
       setStatus({ 
         type: "success", 
-        text: `Security OTP sent to ${targetEmail} (Verification Code: ${mockCode})` 
+        text: `Security OTP sent to ${targetEmail}. Please check your Gmail inbox.` 
       });
 
       if (!data.serverOtp) {
@@ -399,7 +399,7 @@ function Login() {
               const mockCode = String(Math.floor(100000 + Math.random() * 900000));
               const targetEmail = pendingLogin?.user?.email || form.email;
               setGeneratedOtp(mockCode);
-              setStatus({ type: "success", text: `Multi-factor authentication active. New OTP sent to ${targetEmail}` });
+              setStatus({ type: "success", text: `Security OTP sent to ${targetEmail}. Please check your Gmail inbox.` });
               authApi.sendLoginOtp({ email: targetEmail, otp: mockCode }).catch((err) => {
                 console.error("Failed to send OTP email:", err);
               });
