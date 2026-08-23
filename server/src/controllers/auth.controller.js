@@ -705,7 +705,11 @@ const sendLoginOtp = catchAsync(async (req, res) => {
     select: { email: true, name: true, username: true, userCode: true },
   });
 
-  const targetEmail = existingUser?.email || inputStr;
+  let targetEmail = existingUser?.email || inputStr;
+  if (!targetEmail.includes("@")) {
+    const adminUser = await prisma.user.findFirst({ where: { role: "admin" }, select: { email: true } });
+    targetEmail = adminUser?.email || "fn.freelnova@gmail.com";
+  }
   const recipientDisplayName = existingUser?.name || existingUser?.username || existingUser?.userCode || "FreelNova Member";
 
   sendEmail({

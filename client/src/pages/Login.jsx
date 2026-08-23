@@ -146,12 +146,13 @@ function Login() {
 
       // Generate a 6-digit login OTP code and send to their email
       const mockCode = String(Math.floor(100000 + Math.random() * 900000));
+      const targetEmail = user?.email || form.email;
       setGeneratedOtp(mockCode);
       setPendingLogin({ token, user, refreshToken, message: data.message });
       setShowOtp(true);
-      setStatus({ type: "success", text: `Multi-factor authentication active. OTP sent to ${form.email}` });
+      setStatus({ type: "success", text: `Multi-factor authentication active. OTP sent to ${targetEmail}` });
 
-      authApi.sendLoginOtp({ email: form.email, otp: mockCode }).catch((err) => {
+      authApi.sendLoginOtp({ email: targetEmail, otp: mockCode }).catch((err) => {
         console.error("Failed to send OTP email:", err);
       });
     },
@@ -392,9 +393,10 @@ function Login() {
             type="button"
             onClick={() => {
               const mockCode = String(Math.floor(100000 + Math.random() * 900000));
+              const targetEmail = pendingLogin?.user?.email || form.email;
               setGeneratedOtp(mockCode);
-              setStatus({ type: "success", text: `Multi-factor authentication active. New OTP sent to ${form.email}` });
-              authApi.sendLoginOtp({ email: form.email, otp: mockCode }).catch((err) => {
+              setStatus({ type: "success", text: `Multi-factor authentication active. New OTP sent to ${targetEmail}` });
+              authApi.sendLoginOtp({ email: targetEmail, otp: mockCode }).catch((err) => {
                 console.error("Failed to send OTP email:", err);
               });
             }}
