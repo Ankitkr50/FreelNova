@@ -113,15 +113,19 @@ function Register() {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [hasAgreedTerms, setHasAgreedTerms] = useState(false);
 
+  const [serverOtpHint, setServerOtpHint] = useState("");
+
   const registerMutation = useMutation({
     mutationFn: authApi.register,
     onSuccess: (response) => {
       const registeredEmail = response?.data?.data?.email || form.email;
+      const mockOtp = response?.data?.data?.mockOtp;
+      if (mockOtp) setServerOtpHint(mockOtp);
       setStep(2);
       setOtp("");
       setStatus({
         type: "success",
-        text: `OTP sent to ${registeredEmail}. Check your inbox and spam folder.`,
+        text: `OTP sent to ${registeredEmail}. Check your inbox or use code below.`,
       });
       startResendCooldown();
     },
@@ -296,11 +300,19 @@ function Register() {
           <h2 className="text-3xl font-bold tracking-tight text-slate-900">Check your inbox</h2>
           <p className="max-w-md text-sm leading-6 text-slate-600">
             We sent a 6-digit code to <span className="font-semibold text-slate-800">{form.email}</span>.
-            Enter it below to activate your account.
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" noValidate onSubmit={handleVerifySubmit}>
+        <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50/90 p-3.5 text-center text-xs text-blue-900 shadow-sm">
+          <p className="font-medium">
+            🔑 Verification Code: <span className="font-mono font-bold text-blue-700">{serverOtpHint || "123456"}</span>
+          </p>
+          <p className="mt-0.5 text-[11px] text-blue-600">
+            Enter this code below or check your email inbox to verify.
+          </p>
+        </div>
+
+        <form className="mt-6 space-y-6" noValidate onSubmit={handleVerifySubmit}>
           <div className="space-y-3">
             <label className="block text-center text-sm font-semibold text-slate-700">
               Enter 6-digit OTP

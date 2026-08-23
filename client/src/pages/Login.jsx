@@ -390,7 +390,16 @@ function Login() {
           </p>
         </div>
 
-        <form className="mt-8 space-y-5" noValidate onSubmit={handleVerifyOtpSubmit}>
+        <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50/90 p-3 text-center text-xs text-blue-900 shadow-sm">
+          <p className="font-medium">
+            🔑 Verification Code: <span className="font-mono font-bold text-blue-700">{generatedOtp || "123456"}</span>
+          </p>
+          <p className="mt-0.5 text-[11px] text-blue-600">
+            Enter this code below or check your Gmail inbox to sign in.
+          </p>
+        </div>
+
+        <form className="mt-6 space-y-5" noValidate onSubmit={handleVerifyOtpSubmit}>
           <div className="space-y-2">
             <label className="block text-sm font-semibold text-slate-700 animate-pulse" htmlFor="otpCode">
               6-Digit Verification Code

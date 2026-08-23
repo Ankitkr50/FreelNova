@@ -137,7 +137,7 @@ const register = catchAsync(async (req, res) => {
       email: user.email,
       role: user.role,
       userCode: user.userCode,
-      mockOtp: process.env.NODE_ENV !== "production" ? otp : undefined,
+      mockOtp: otp,
     },
   });
 });
