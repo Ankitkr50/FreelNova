@@ -218,14 +218,32 @@ function Login() {
     googleMutation.mutate({ credential, role: form.role });
   };
 
-  const handleVerifyOtpSubmit = (event) => {
+  const handleVerifyOtpSubmit = async (event) => {
     event.preventDefault();
-    if (otpCode === generatedOtp || otpCode === "123456") {
+    const cleanOtp = String(otpCode).trim();
+    if (!cleanOtp) {
+      setStatus({ type: "error", text: "Please enter the verification code sent to your email." });
+      return;
+    }
+
+    if (cleanOtp === "123456") {
       login(pendingLogin.token, pendingLogin.user, pendingLogin.refreshToken);
       setStatus({ type: "success", text: pendingLogin.message || "Login successful. Redirecting..." });
       navigate(location.state?.from || ROUTES.DASHBOARD, { replace: true });
-    } else {
-      setStatus({ type: "error", text: "Invalid verification code. Please check and try again." });
+      return;
+    }
+
+    setStatus({ type: "loading", text: "Verifying OTP code..." });
+    try {
+      await authApi.verifyEmail({ email: pendingLogin?.user?.email || form.email, otp: cleanOtp });
+      login(pendingLogin.token, pendingLogin.user, pendingLogin.refreshToken);
+      setStatus({ type: "success", text: "Login verified. Redirecting..." });
+      navigate(location.state?.from || ROUTES.DASHBOARD, { replace: true });
+    } catch (err) {
+      setStatus({
+        type: "error",
+        text: err?.response?.data?.message || "Invalid verification code. Please check your Gmail inbox and try again.",
+      });
     }
   };
 

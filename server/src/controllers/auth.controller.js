@@ -331,8 +331,17 @@ const login = catchAsync(async (req, res) => {
     }
   }
 
-  // Generate server-side login OTP and dispatch real email directly
+  // Generate server-side login OTP, save hash to DB, and dispatch real email exclusively to Gmail
   const serverOtp = String(crypto.randomInt(100_000, 1_000_000));
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      emailOtp: hashOtp(serverOtp),
+      emailOtpExpiresAt: new Date(Date.now() + 10 * 60 * 1000),
+      emailOtpAttempts: 0,
+    },
+  }).catch(() => {});
+
   sendEmail({
     to: user.email,
     subject: "FreelNova Secure Login Verification Code",
@@ -356,7 +365,6 @@ const login = catchAsync(async (req, res) => {
       user: createAuthPayload(user),
       accessToken,
       refreshToken,
-      serverOtp,
     },
   });
 
@@ -492,7 +500,6 @@ const verifyOtp = catchAsync(async (req, res) => {
   const invalidMsg = "Invalid or expired OTP. Please request a new one.";
 
   if (!user) throw new ApiError(400, invalidMsg);
-  if (user.isEmailVerified) throw new ApiError(400, "Email is already verified. Please log in.");
   if (!user.emailOtp || !user.emailOtpExpiresAt) throw new ApiError(400, invalidMsg);
   if (new Date() > user.emailOtpExpiresAt) throw new ApiError(400, "OTP has expired. Please request a new one.");
 
