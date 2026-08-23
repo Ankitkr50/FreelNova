@@ -15,22 +15,41 @@ const isEmailConfigured = () =>
       env.smtpPass
   );
 
-const buildTransportOptions = () => ({
-  host: env.smtpHost,
-  port: env.smtpPort,
-  secure: env.smtpSecure,
-  auth: {
-    user: env.smtpUser,
-    pass: env.smtpPass,
-  },
-  connectionTimeout: 15_000,
-  greetingTimeout: 15_000,
-  socketTimeout: 20_000,
-  tls: {
-    rejectUnauthorized: false,
-    servername: env.smtpHost,
-  },
-});
+const buildTransportOptions = () => {
+  const isGmail = (env.smtpHost || "").toLowerCase().includes("gmail.com");
+  if (isGmail) {
+    return {
+      service: "gmail",
+      auth: {
+        user: env.smtpUser,
+        pass: env.smtpPass,
+      },
+      connectionTimeout: 15_000,
+      greetingTimeout: 15_000,
+      socketTimeout: 20_000,
+      tls: {
+        rejectUnauthorized: false,
+      },
+    };
+  }
+
+  return {
+    host: env.smtpHost,
+    port: env.smtpPort,
+    secure: env.smtpSecure,
+    auth: {
+      user: env.smtpUser,
+      pass: env.smtpPass,
+    },
+    connectionTimeout: 15_000,
+    greetingTimeout: 15_000,
+    socketTimeout: 20_000,
+    tls: {
+      rejectUnauthorized: false,
+      servername: env.smtpHost,
+    },
+  };
+};
 
 const getTransporter = () => {
   if (!transporter) {
