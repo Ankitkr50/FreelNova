@@ -131,6 +131,11 @@ const sendEmail = async ({ to, subject, html, text }) => {
       subject,
       text,
       html,
+      headers: {
+        "X-Priority": "1",
+        "X-MSMail-Priority": "High",
+        "Importance": "high",
+      },
     });
   } catch (error) {
     throw new Error(normalizeEmailError(error));
