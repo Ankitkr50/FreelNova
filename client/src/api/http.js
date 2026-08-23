@@ -17,6 +17,11 @@ http.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
+  // Prevent double /api/api/ pathing
+  if (config.url && config.url.startsWith("/api/") && baseURL.endsWith("/api")) {
+    config.url = config.url.replace(/^\/api/, "");
+  }
+
   return config;
 });
 
