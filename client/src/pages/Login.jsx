@@ -413,14 +413,15 @@ function Login() {
           
           <button
             type="button"
-            onClick={() => {
-              const mockCode = String(Math.floor(100000 + Math.random() * 900000));
+            onClick={async () => {
               const targetEmail = pendingLogin?.user?.email || form.email;
-              setGeneratedOtp(mockCode);
-              setStatus({ type: "success", text: `Security OTP sent to ${targetEmail}. Please check your Gmail inbox.` });
-              authApi.sendLoginOtp({ email: targetEmail, otp: mockCode }).catch((err) => {
-                console.error("Failed to send OTP email:", err);
-              });
+              setStatus({ type: "loading", text: "Sending new OTP code..." });
+              try {
+                await authApi.resendOtp({ email: targetEmail });
+                setStatus({ type: "success", text: `A new Security OTP has been sent to ${targetEmail}. Please check your Gmail inbox.` });
+              } catch (err) {
+                setStatus({ type: "error", text: err?.response?.data?.message || "Failed to resend code. Please try again." });
+              }
             }}
             className="w-full text-center text-xs font-semibold text-blue-600 hover:text-blue-700 cursor-pointer"
           >

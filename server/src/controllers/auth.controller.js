@@ -563,21 +563,19 @@ const resendOtp = catchAsync(async (req, res) => {
   const email = String(req.body.email || "").toLowerCase().trim();
   if (!email) throw new ApiError(400, "Email is required");
 
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { email },
+        { username: email.replace(/^@/, "") },
+        { userCode: email.toUpperCase() },
+      ],
+    },
+  });
 
-  if (!user || user.isEmailVerified) {
-    return res.status(200).json({ success: true, message: "If the email exists and is unverified, a new OTP has been sent." });
+  if (!user) {
+    return res.status(200).json({ success: true, message: "A new OTP code has been sent to your email." });
   }
-
-  if (user.emailOtpExpiresAt && user.emailOtpExpiresAt > new Date(Date.now() + 9 * 60 * 1000)) {
-    throw new ApiError(429, "Please wait at least 60 seconds before requesting a new OTP.");
-  }
-
-  const previousOtpState = {
-    emailOtp: user.emailOtp,
-    emailOtpExpiresAt: user.emailOtpExpiresAt,
-    emailOtpAttempts: user.emailOtpAttempts,
-  };
 
   const otp = generateOtp();
   await prisma.user.update({
@@ -589,34 +587,24 @@ const resendOtp = catchAsync(async (req, res) => {
     },
   });
 
-  const emailConfigured = isEmailConfigured();
-  if (emailConfigured) {
-    try {
-      await sendEmail({
-        to: user.email,
-        subject: "Your New FreelNova Verification Code",
-        text: `Your new verification code is: ${otp}\n\nIt expires in 10 minutes.`,
-        html: buildFreelNovaEmailHtml({
-          headline: "New Verification Code Requested",
-          recipientName: user.name || "FreelNova Member",
-          introText: "Here is your newly generated verification code for your FreelNova account:",
-          codeLabel: "NEW OTP CODE",
-          codeValue: otp,
-          copyInstruction: "Press and hold (phone) or triple-click (computer) the code above to copy it.",
-          whatsNextText: "Use this code to verify your identity and activate your account.",
-          securityNote: "This code expires in 10 minutes. If you did not request this code, please contact support immediately.",
-        }),
-      });
-    } catch (error) {
-      console.log(`\n[SMTP Offline Fallback] Failed to resend email via SMTP: ${error.message}`);
-    }
-  }
-
-  // Always log mock details to terminal log for sandbox testing
-  console.log(`\n\n======================================================`);
-  console.log(`[SANDBOX MOCK SMTP ACTIVE] New OTP Code generated for ${user.email}`);
-  console.log(`OTP Code: ${otp} (Enter ${otp} or bypass 123456 to verify)`);
-  console.log(`======================================================\n\n`);
+  sendEmail({
+    to: user.email,
+    subject: "FreelNova Login Verification Code",
+    text: `Your FreelNova 6-digit Login OTP code is: ${otp}\n\nThis code is valid for 10 minutes. Do not share this code with anyone.`,
+    html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; color: #1e293b; max-width: 500px;">
+        <h2 style="color: #2563eb; margin-bottom: 10px;">FreelNova Verification Code</h2>
+        <p style="font-size: 16px; color: #334155;">Dear <strong>${user.name || "FreelNova Member"}</strong>,</p>
+        <p style="font-size: 15px; color: #334155;">Your new 6-digit verification code is:</p>
+        <div style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #1e40af; background-color: #f1f5f9; padding: 16px 24px; border-radius: 8px; display: inline-block; margin: 15px 0;">
+          ${otp}
+        </div>
+        <p style="font-size: 14px; color: #64748b;">This code is valid for 10 minutes. If you did not request this code, please ignore this email.</p>
+      </div>
+    `,
+  })
+    .then(() => logger.info("resend_otp_send_success", { targetEmail: user.email }))
+    .catch((err) => logger.error("resend_otp_send_failed", { targetEmail: user.email, error: err.message }));
 
   return res.status(200).json({ success: true, message: "A new OTP has been sent to your email." });
 });
