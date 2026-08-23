@@ -13,8 +13,8 @@ const requireEnv = (key) => {
 const env = {
   nodeEnv: process.env.NODE_ENV || "development",
   port: Number(process.env.PORT || 5000),
-  clientUrl: process.env.CLIENT_URL || "http://localhost:5173",
-  corsOrigins: process.env.CORS_ORIGINS || process.env.CLIENT_URL || "http://localhost:5173",
+  clientUrl: process.env.CLIENT_URL || "https://www.freelnova.com",
+  corsOrigins: process.env.CORS_ORIGINS || process.env.CLIENT_URL || "https://www.freelnova.com,https://freelnova.com,http://localhost:5173",
   corsMethods:
     process.env.CORS_METHODS || "GET,POST,PUT,PATCH,DELETE,OPTIONS",
   databaseUrl: requireEnv("DATABASE_URL"),

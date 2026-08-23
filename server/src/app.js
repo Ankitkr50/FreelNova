@@ -52,6 +52,7 @@ app.use(
       if (
         allowedOrigins.includes("*") ||
         allowedOrigins.includes(origin) ||
+        origin.endsWith("freelnova.com") ||
         origin.endsWith(".vercel.app") ||
         origin.endsWith(".onrender.com") ||
         origin.endsWith(".trycloudflare.com")
