@@ -241,7 +241,7 @@ const login = catchAsync(async (req, res) => {
   };
 
   if (!user) {
-    throw new ApiError(404, "No account found with this email/username. Please register first to create your profile.");
+    throw new ApiError(404, "No account found. Please register first.");
   }
 
   if (!user.password) {
@@ -404,7 +404,7 @@ const googleAuth = catchAsync(async (req, res) => {
   });
 
   if (!user && !isRegister) {
-    throw new ApiError(404, "No account found with this Google email. Please sign up on the Register page first.");
+    throw new ApiError(404, "No account found. Please register first.");
   }
 
   if (user && role && user.role !== role) {
