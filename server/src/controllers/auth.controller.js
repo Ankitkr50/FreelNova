@@ -224,7 +224,7 @@ const login = catchAsync(async (req, res) => {
   }
 
   if (user && role && user.role !== role.toLowerCase().trim()) {
-    throw new ApiError(400, `This email is already registered as a ${user.role}. Please select the correct role or use a different email.`);
+    throw new ApiError(400, `Registered as ${user.role}. Please select ${user.role}.`);
   }
 
   const failLogin = async () => {
@@ -408,7 +408,7 @@ const googleAuth = catchAsync(async (req, res) => {
   }
 
   if (user && isRegister && role && user.role !== role) {
-    throw new ApiError(400, `This email is already registered as a ${user.role}. Please select the correct role or use a different email.`);
+    throw new ApiError(400, `Registered as ${user.role}. Please select ${user.role}.`);
   }
 
   if (!user) {
