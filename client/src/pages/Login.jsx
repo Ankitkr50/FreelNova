@@ -571,8 +571,8 @@ function Login() {
       )}
 
       {status.text ? (
-        <div
-          className={`mt-4 rounded-2xl border px-4 py-3 text-sm flex flex-col gap-2 ${
+        <p
+          className={`mt-4 rounded-2xl border px-4 py-3 text-sm ${
             status.type === "error"
               ? "border-rose-200 bg-rose-50 text-rose-700"
               : status.type === "success"
@@ -580,16 +580,8 @@ function Login() {
                 : "border-slate-200 bg-slate-50 text-slate-700"
           }`}
         >
-          <span>{status.text}</span>
-          {status.type === "error" && (status.text.toLowerCase().includes("register") || status.text.toLowerCase().includes("no account")) && (
-            <Link
-              to={ROUTES.REGISTER}
-              className="inline-block mt-1 font-bold text-blue-600 hover:text-blue-800 underline text-xs"
-            >
-              👉 Click here to Register / Create Account
-            </Link>
-          )}
-        </div>
+          {status.text}
+        </p>
       ) : null}
 
       <p className="mt-5 text-xs leading-6 text-slate-500">
