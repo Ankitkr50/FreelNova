@@ -303,14 +303,7 @@ function Register() {
           </p>
         </div>
 
-        <div className="mt-4 rounded-xl border border-blue-200 bg-blue-50/90 p-3.5 text-center text-xs text-blue-900 shadow-sm">
-          <p className="font-medium">
-            🔑 Verification Code: <span className="font-mono font-bold text-blue-700">{serverOtpHint || "123456"}</span>
-          </p>
-          <p className="mt-0.5 text-[11px] text-blue-600">
-            Enter this code below or check your email inbox to verify.
-          </p>
-        </div>
+
 
         <form className="mt-6 space-y-6" noValidate onSubmit={handleVerifySubmit}>
           <div className="space-y-3">
