@@ -240,7 +240,11 @@ const login = catchAsync(async (req, res) => {
     throw new ApiError(401, `Invalid credentials. ${3 - attempts} attempt(s) remaining.`);
   };
 
-  if (!user || !user.password) {
+  if (!user) {
+    throw new ApiError(404, "No account found with this email/username. Please register first to create your profile.");
+  }
+
+  if (!user.password) {
     await failLogin();
   }
 
