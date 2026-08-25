@@ -54,7 +54,12 @@ const generateNextUserCode = async (role = "freelancer") => {
   while (true) {
     const candidate = `${prefix}${String(nextNum).padStart(8, "0")}`;
     const existing = await prisma.user.findFirst({
-      where: { userCode: candidate },
+      where: {
+        OR: [
+          { userCode: candidate },
+          { username: candidate },
+        ],
+      },
       select: { id: true },
     });
     if (!existing) {
