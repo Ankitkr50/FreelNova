@@ -52,6 +52,8 @@ app.use(
       if (
         allowedOrigins.includes("*") ||
         allowedOrigins.includes(origin) ||
+        origin.startsWith("http://localhost:") ||
+        origin.startsWith("http://127.0.0.1:") ||
         origin.endsWith("freelnova.com") ||
         origin.endsWith(".vercel.app") ||
         origin.endsWith(".onrender.com") ||
