@@ -379,7 +379,12 @@ function EditProfile() {
             errors={errors}
             onChange={handleFieldChange}
             values={form}
-            isUsernameSet={Boolean(profile?.username)}
+            isUsernameSet={Boolean(
+              profile?.username &&
+                profile?.username !== profile?.userCode &&
+                !profile?.username.startsWith("FID") &&
+                !profile?.username.startsWith("AID")
+            )}
             onSetUsername={handleSetUsername}
           />
           <SkillsSection

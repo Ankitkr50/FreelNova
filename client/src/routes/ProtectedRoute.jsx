@@ -14,6 +14,16 @@ function ProtectedRoute({ allowedRoles = [] }) {
     return <Navigate replace to={ROUTES.DASHBOARD} />;
   }
 
+  // Mandatory First-Time Onboarding Form for new Freelancers and Recruiters/Clients
+  if (
+    user?.role !== "admin" &&
+    !user?.profileCompleted &&
+    location.pathname !== ROUTES.COMPLETE_PROFILE &&
+    location.pathname !== ROUTES.PENDING_VERIFICATION
+  ) {
+    return <Navigate replace to={ROUTES.COMPLETE_PROFILE} />;
+  }
+
   return <Outlet />;
 }
 

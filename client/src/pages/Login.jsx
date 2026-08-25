@@ -170,9 +170,11 @@ function Login() {
     mutationFn: authApi.googleAuth,
     onSuccess: (response) => {
       const data = response?.data ?? {};
-      login(data.accessToken, data.user, data.refreshToken);
-      setStatus({ type: "success", text: data.message || "Google login successful. Redirecting..." });
-      navigate(location.state?.from || ROUTES.DASHBOARD, { replace: true });
+      if (data.user && data.user.role !== "admin" && !data.user.profileCompleted) {
+        navigate(ROUTES.COMPLETE_PROFILE, { replace: true });
+      } else {
+        navigate(location.state?.from || ROUTES.DASHBOARD, { replace: true });
+      }
     },
     onError: (error) => {
       setStatus({ type: "error", text: error?.response?.data?.message || "Google login failed. Please try again." });
