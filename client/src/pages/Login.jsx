@@ -217,7 +217,7 @@ function Login() {
 
   const handleGoogleCredential = (credential) => {
     setStatus({ type: "loading", text: "Signing in with Google..." });
-    googleMutation.mutate({ credential, role: form.role });
+    googleMutation.mutate({ credential, role: form.role, isRegister: false });
   };
 
   const handleVerifyOtpSubmit = async (event) => {

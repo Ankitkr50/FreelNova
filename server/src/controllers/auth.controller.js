@@ -93,7 +93,7 @@ const register = catchAsync(async (req, res) => {
       name,
       email: formattedEmail,
       userCode,
-      username: userCode,
+      username: null,
       password: hashedPassword,
       role: role || "freelancer",
       isEmailVerified: false,
@@ -373,7 +373,7 @@ const login = catchAsync(async (req, res) => {
 });
 
 const googleAuth = catchAsync(async (req, res) => {
-  const { credential, role } = req.validatedBody;
+  const { credential, role, isRegister } = req.body || {};
 
   if (role === "admin") {
     throw new ApiError(400, "Administrator registration/login via Google is not allowed.");
@@ -394,6 +394,9 @@ const googleAuth = catchAsync(async (req, res) => {
     }
   });
 
+  if (!user && !isRegister) {
+    throw new ApiError(404, "No account found with this Google email. Please sign up on the Register page first.");
+  }
 
   if (user && role && user.role !== role) {
     throw new ApiError(400, `This email is already registered as a ${user.role}. Please select the correct role or use a different email.`);
@@ -415,7 +418,7 @@ const googleAuth = catchAsync(async (req, res) => {
         name: identity.name,
         email: identity.email,
         userCode: googleUserCode,
-        username: googleUserCode,
+        username: null,
         password: dummyPassword,
         role: role || "freelancer",
         authProvider: "google",

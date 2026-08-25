@@ -490,7 +490,7 @@ function Register() {
             disabled={isBusy}
             onCredential={(credential) => {
               setStatus({ type: "loading", text: "Creating account with Google..." });
-              googleMutation.mutate({ credential, role: form.role });
+              googleMutation.mutate({ credential, role: form.role, isRegister: true });
             }}
             text="signup_with"
           />
