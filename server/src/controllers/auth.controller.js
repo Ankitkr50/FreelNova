@@ -93,7 +93,7 @@ const register = catchAsync(async (req, res) => {
       name,
       email: formattedEmail,
       userCode,
-      username: null,
+      username: userCode,
       password: hashedPassword,
       role: role || "freelancer",
       isEmailVerified: false,
@@ -373,7 +373,7 @@ const login = catchAsync(async (req, res) => {
 });
 
 const googleAuth = catchAsync(async (req, res) => {
-  const { credential, role, isRegister } = req.body || {};
+  const { credential, role, isRegister } = req.validatedBody || req.body || {};
 
   if (role === "admin") {
     throw new ApiError(400, "Administrator registration/login via Google is not allowed.");
@@ -418,7 +418,7 @@ const googleAuth = catchAsync(async (req, res) => {
         name: identity.name,
         email: identity.email,
         userCode: googleUserCode,
-        username: null,
+        username: googleUserCode,
         password: dummyPassword,
         role: role || "freelancer",
         authProvider: "google",

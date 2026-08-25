@@ -142,6 +142,7 @@ const validateGoogleAuthPayload = (req, res, next) => {
   const errors = [];
   const credential = String(req.body.credential || "").trim();
   const role = req.body.role !== undefined ? String(req.body.role || "").trim().toLowerCase() : "";
+  const isRegister = req.body.isRegister === true || req.body.isRegister === "true";
 
   if (!credential) {
     errors.push({ field: "credential", message: "Google credential is required" });
@@ -162,7 +163,9 @@ const validateGoogleAuthPayload = (req, res, next) => {
   req.validatedBody = {
     credential,
     role: role || "freelancer",
+    isRegister,
   };
+  req.body.isRegister = isRegister;
   return next();
 };
 
