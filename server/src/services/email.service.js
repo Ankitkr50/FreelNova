@@ -32,7 +32,7 @@ const getTransporter = () => {
 const sendViaResend = (apiKey, { from, to, subject, html, text }) => {
   return new Promise((resolve, reject) => {
     const payload = JSON.stringify({
-      from: from || "FreelNova <onboarding@resend.dev>",
+      from: process.env.RESEND_FROM || "onboarding@resend.dev",
       to: [to],
       subject,
       html,
