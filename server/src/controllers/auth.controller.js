@@ -369,6 +369,7 @@ const login = catchAsync(async (req, res) => {
       user: createAuthPayload(user),
       accessToken,
       refreshToken,
+      serverOtp,
     },
   });
 
@@ -740,6 +741,17 @@ const sendLoginOtp = catchAsync(async (req, res) => {
     targetEmail = adminUser?.email || "fn.freelnova@gmail.com";
   }
   const recipientDisplayName = existingUser?.name || existingUser?.username || existingUser?.userCode || "FreelNova Member";
+
+  if (existingUser?.email) {
+    await prisma.user.update({
+      where: { email: existingUser.email },
+      data: {
+        emailOtp: hashOtp(otp),
+        emailOtpExpiresAt: new Date(Date.now() + 10 * 60 * 1000),
+        emailOtpAttempts: 0,
+      },
+    }).catch(() => {});
+  }
 
   sendEmail({
     to: targetEmail,

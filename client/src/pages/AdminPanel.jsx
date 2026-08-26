@@ -236,7 +236,8 @@ function mapRows(tab, rows) {
 
 function AdminPanel() {
   const { user } = useAuth();
-  const role = user?.role || "freelancer";
+  const role = String(user?.role || "freelancer").toLowerCase();
+  const isAdmin = role === "admin" || Boolean(user?.adminRole) || user?.email === "fn.freelnova@gmail.com";
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -369,7 +370,7 @@ function AdminPanel() {
     queryKey: ["admin", activeTab, queryParams],
     queryFn: () => adminApi.listByTab(activeTab, queryParams),
     enabled:
-      role === "admin" &&
+      isAdmin &&
       ![
         "system_logs",
         "sentiment_watchlist",
@@ -391,7 +392,7 @@ function AdminPanel() {
       const res = await adminApi.getIntelligence(selectedDate, selectedRange);
       return res?.data?.data || {};
     },
-    enabled: role === "admin" && canViewFinancials,
+    enabled: isAdmin && canViewFinancials,
   });
 
   // Fetch full list of users for the quick-access directory dropdown
@@ -401,7 +402,7 @@ function AdminPanel() {
       const res = await adminApi.listUsers({ page: 1, limit: 1000 });
       return res?.data?.data || [];
     },
-    enabled: role === "admin" && (isSuperAdmin || userPermissions.includes(PERMISSIONS.USERS_VIEW)),
+    enabled: isAdmin && (isSuperAdmin || userPermissions.includes(PERMISSIONS.USERS_VIEW)),
   });
   const quickUsers = quickUsersData || [];
 
@@ -419,7 +420,7 @@ function AdminPanel() {
       const res = await adminApi.listProjects({ page: 1, limit: 1000 });
       return res?.data?.data || [];
     },
-    enabled: role === "admin",
+    enabled: isAdmin,
   });
   const quickProjects = quickProjectsData || [];
 
