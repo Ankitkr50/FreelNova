@@ -920,7 +920,9 @@ const cleanAnkitUser = catchAsync(async (req, res) => {
       email: { contains: "ankitkumar829301", mode: "insensitive" },
     },
   });
-  userCache.flushAll();
+  if (typeof userCache?.flushAll === "function") {
+    userCache.flushAll();
+  }
   res.status(200).json({
     success: true,
     deletedCount: result.count,
