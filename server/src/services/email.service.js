@@ -217,9 +217,9 @@ const buildFreelNovaEmailHtml = ({
             <tr>
               <td align="left" style="vertical-align: middle;">
                 <a href="https://www.freelnova.com/company-info" class="no-line" style="text-decoration: none !important; -webkit-text-decoration-line: none !important; display: inline-block; border-bottom: 0 !important;">
-                  <span style="font-family: 'Sora', -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 34px; letter-spacing: -0.8px; color: #ffffff; text-decoration: none !important; -webkit-text-decoration-line: none !important;">
-                    <span style="font-weight: 800; color: #ffffff;">Freel</span><span style="font-weight: 400; color: #ffffff;">Nova</span><span style="display: inline-block; width: 10px; height: 10px; background-color: #3b82f6; border-radius: 50%; margin-left: 3px; vertical-align: baseline;"></span>
-                  </span>
+                  <div style="background-color: #ffffff; padding: 6px 16px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 12px rgba(0,0,0,0.18);">
+                    <img src="https://raw.githubusercontent.com/Ankitkr50/FreelNova/main/client/public/freelnova_original_logo.png" alt="FreelNova" style="height: 28px; width: auto; display: block; border: 0;" />
+                  </div>
                 </a>
               </td>
               <td align="right" style="vertical-align: middle;">
@@ -256,7 +256,7 @@ const buildFreelNovaEmailHtml = ({
 
           <!-- Footer -->
           <div style="background-color: #f8fafc; padding: 24px 30px; border-top: 1px solid #e2e8f0; text-align: center;">
-            <div style="font-size: 11px; color: #64748b; margin-bottom: 10px;">Powered by FreelNova Technologies Pvt Ltd • All Rights Reserved</div>
+            <div style="font-size: 11px; color: #64748b; margin-bottom: 12px;">Powered by FreelNova Technologies Pvt Ltd • All Rights Reserved</div>
             <div style="font-size: 11px; color: #2563eb; margin-bottom: 14px;">
               <a href="https://www.freelnova.com/company-info" class="no-line" style="color: #2563eb !important; text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important; font-weight: 700;">
                 <span class="no-line" style="color: #2563eb !important; text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important; font-weight: 700;">Privacy Policy</span>
