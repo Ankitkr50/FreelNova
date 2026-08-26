@@ -117,9 +117,10 @@ const getProfile = catchAsync(async (req, res) => {
     });
   }
 
-  if (user && (user.role === "admin" || user.adminRole)) {
+  if (user && (user.role === "admin" || user.adminRole || user.email === "fn.freelnova@gmail.com")) {
     user = {
       ...user,
+      username: user.email === "fn.freelnova@gmail.com" ? "admin_freelnova" : (user.username || "admin_freelnova"),
       customRoleTitle: user.customRoleTitle || (user.adminRole === "CUSTOM" ? "Main Admin" : (user.adminRole ? user.adminRole.replace(/_/g, " ") : "Super Administrator (Full Access)")),
     };
   }

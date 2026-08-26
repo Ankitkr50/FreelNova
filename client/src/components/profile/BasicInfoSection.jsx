@@ -95,7 +95,13 @@ function BasicInfoSection({ values, editable = false, onChange, errors = {}, isU
           </div>
           <div>
             <dt className="font-medium text-slate-500">Username</dt>
-            <dd className="font-bold text-blue-600">@{values.username || values.fullName?.toLowerCase().replace(/\s+/g, "") || "user"}</dd>
+            <dd className="font-bold text-blue-600">
+              @{values.username && !values.username.includes("@")
+                ? values.username
+                : values.email === "fn.freelnova@gmail.com" || values.role === "admin"
+                ? "admin_freelnova"
+                : values.username?.split("@")[0] || values.fullName?.toLowerCase().replace(/\s+/g, "") || "user"}
+            </dd>
           </div>
           {(values.adminRole || values.role === "admin") && (
             <div>
