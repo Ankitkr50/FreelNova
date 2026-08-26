@@ -1816,11 +1816,6 @@ function AdminPanel() {
                                 </button>
                               </>
                             )}
-                            {activeTab === "users" && row.profileCompleted && !row.isVerified && (
-                              <button className="rounded-md border border-emerald-300 px-2 py-1 text-xs text-emerald-700 hover:bg-emerald-50" onClick={() => handleAction("view", row.id)} type="button">
-                                Verify
-                              </button>
-                            )}
                           </div>
                         )}
                       </td>
