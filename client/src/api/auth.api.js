@@ -32,6 +32,7 @@ export const authApi = {
       await http.post("/auth/google", {
         credential: payload.credential,
         role: payload.role,
+        isRegister: payload.isRegister,
       }),
     ),
   // OTP-based email verification
