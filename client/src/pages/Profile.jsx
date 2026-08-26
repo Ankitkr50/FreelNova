@@ -18,6 +18,7 @@ import { useQuery } from "@tanstack/react-query";
 import http from "../api/http.js";
 import { useProfileQuery, useUpdateProfileMutation } from "../hooks/useProfile.js";
 import { useAuth } from "../hooks/useAuth.js";
+import { getDisplayUsername, getDisplayUserCode } from "../utils/userHandle.js";
 import { calculateProfileCompletion, getMissingFields } from "../utils/profile.js";
 import { ROUTES } from "../constants/routes.js";
 
@@ -247,18 +248,10 @@ function Profile() {
                 <div>
                   <p className="text-lg font-semibold text-slate-900">{profile.name || "FreelNova User"}</p>
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <p className="text-xs font-bold text-blue-600">
-                      @{profile.username && !profile.username.includes("@")
-                        ? profile.username
-                        : profile.email === "fn.freelnova@gmail.com" || profile.role === "admin"
-                        ? "admin_freelnova"
-                        : profile.username?.split("@")[0] || profile.name?.toLowerCase().replace(/\s+/g, "") || "user"}
-                    </p>
-                    {profile.userCode && (
-                      <span className="rounded-full bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 text-[10px] font-extrabold font-mono tracking-wider select-none">
-                        {profile.userCode}
-                      </span>
-                    )}
+                    <p className="text-xs font-bold text-blue-600">@{getDisplayUsername(profile)}</p>
+                    <span className="rounded-full bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 text-[10px] font-extrabold font-mono tracking-wider select-none">
+                      {getDisplayUserCode(profile)}
+                    </span>
                     {(() => {
                       const proUsers = JSON.parse(localStorage.getItem("sb_pro_user_ids") || "[]");
                       const isProfilePro = profile.isPro || (profile.subscriptions && profile.subscriptions.length > 0) || proUsers.includes(profile.id);
@@ -382,11 +375,7 @@ function Profile() {
                 <h1 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                   {profile.name}
                   <span className="text-xs font-bold text-blue-600 lowercase bg-blue-50 border border-blue-200/80 px-2.5 py-0.5 rounded-full inline-flex items-center gap-1.5">
-                    @{profile.username && !profile.username.includes("@")
-                      ? profile.username
-                      : profile.email === "fn.freelnova@gmail.com" || profile.role === "admin"
-                      ? "admin_freelnova"
-                      : profile.username?.split("@")[0] || (profile.name ? profile.name.toLowerCase().replace(/\s+/g, "") : "user")}
+                    @{getDisplayUsername(profile)}
                     {(() => {
                       const proUsers = JSON.parse(localStorage.getItem("sb_pro_user_ids") || "[]");
                       const isProfilePro = profile.isPro || (profile.subscriptions && profile.subscriptions.length > 0) || proUsers.includes(profile.id);

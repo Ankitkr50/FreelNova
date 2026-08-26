@@ -5,6 +5,7 @@ import { ROUTES } from "../../constants/routes.js";
 import { authApi } from "../../api/auth.api.js";
 import { useNotificationsQuery, useMarkNotificationReadMutation, useMarkAllNotificationsReadMutation, useBroadcastAnnouncementMutation, useRecipientsQuery } from "../../hooks/useNotifications.js";
 import { useAuth } from "../../hooks/useAuth.js";
+import { getDisplayUsername, getDisplayUserCode } from "../../utils/userHandle.js";
 import BrandMark from "./BrandMark.jsx";
 import Container from "./Container.jsx";
 
@@ -492,14 +493,9 @@ function Navbar() {
                       <div className="border-b border-slate-100 px-2 pb-3">
                         <div className="flex items-center gap-1.5 flex-wrap">
                           <p className="font-semibold text-slate-900">{user?.name || "FreelNova user"}</p>
-                          {(() => {
-                            const displayCode = user?.userCode || (user?.role === "admin" ? "AID00000001" : "FID00000001");
-                            return (
-                              <span className="rounded-full bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 text-[9px] font-extrabold font-mono tracking-wider select-none">
-                                {displayCode}
-                              </span>
-                            );
-                          })()}
+                          <span className="rounded-full bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 text-[9px] font-extrabold font-mono tracking-wider select-none">
+                            {getDisplayUserCode(user)}
+                          </span>
                           {(() => {
                             if (user?.adminRole || user?.role === "admin") {
                               const roleKey = user?.adminRole || "SUPER_ADMIN";
@@ -540,7 +536,7 @@ function Navbar() {
                           )}
                         </div>
                         <div className="mt-1 flex items-center gap-1.5">
-                          <p className="text-xs font-bold text-blue-600">@{user?.username || user?.name?.toLowerCase().replace(/\s+/g, "") || "user"}</p>
+                          <p className="text-xs font-bold text-blue-600">@{getDisplayUsername(user)}</p>
                           {(() => {
                             const proUsers = JSON.parse(localStorage.getItem("sb_pro_user_ids") || "[]");
                             const isUserPro = user?.isPro || (user?.subscriptions && user?.subscriptions.length > 0) || (user?.id && proUsers.includes(user.id)) || (localStorage.getItem("fn_pro_active") === "true");
