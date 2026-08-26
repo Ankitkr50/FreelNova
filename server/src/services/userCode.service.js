@@ -10,10 +10,7 @@ function formatCode(prefix, index) {
 
 /**
  * Generate next monotonically increasing atomic user code (FID or AID).
- * Uses PostgreSQL atomic increment via UserSequence model to ensure:
- * - High concurrency safety & zero collisions
- * - Deleted IDs are NEVER reused (Requirement #4, #5, #7, #10)
- * - Display IDs remain permanent and immutable
+ * Uses PostgreSQL atomic increment via UserSequence model.
  */
 async function generateNextUserCodeAtomic(role = "freelancer") {
   const isTargetAdmin = role === "admin" || role === "ADMIN" || role === "SUPER_ADMIN";
@@ -24,7 +21,6 @@ async function generateNextUserCodeAtomic(role = "freelancer") {
   });
 
   if (!seq) {
-    // Find highest existing numerical suffix in DB to initialize sequence safely without overwriting
     const existingCodes = await prisma.user.findMany({
       where: {
         userCode: { startsWith: prefix },
@@ -56,12 +52,10 @@ async function generateNextUserCodeAtomic(role = "freelancer") {
       });
       return formatCode(prefix, initialNextValue);
     } catch (err) {
-      // If concurrent initialization occurred, fallback to update
       seq = await prisma.userSequence.findUnique({ where: { name: prefix } });
     }
   }
 
-  // PostgreSQL atomic column increment
   const updatedSeq = await prisma.userSequence.update({
     where: { name: prefix },
     data: {
@@ -74,13 +68,98 @@ async function generateNextUserCodeAtomic(role = "freelancer") {
 }
 
 /**
- * Deprecated gap-closing resequencer.
- * Retained as a safe no-op to preserve immutable production user IDs (Requirement #11, #14).
+ * Re-sequence all user codes in PostgreSQL database to close gaps and ensure gapless sequential order.
+ * - Primary Super Admin (fn.freelnova@gmail.com) is permanently pinned to AID00000001.
+ * - All other Admins are assigned AID00000002, AID00000003, ... ordered by creation time.
+ * - All normal Users (Freelancers & Clients) are assigned FID00000001, FID00000002, ... ordered by creation time.
  */
 async function resequenceUserPools() {
-  logger.info("resequence_user_pools_skipped", {
-    reason: "Display IDs are permanent and immutable. Gap closure is disabled for data integrity.",
-  });
+  try {
+    // 1. Process Admins / Staff Pool
+    const staffAdmins = await prisma.user.findMany({
+      where: { role: "admin" },
+      orderBy: { createdAt: "asc" },
+      select: { id: true, email: true, userCode: true },
+    });
+
+    let adminCounter = 2; // AID00000001 reserved for Primary Super Admin
+    for (const admin of staffAdmins) {
+      let targetCode;
+      if (admin.email === "fn.freelnova@gmail.com") {
+        targetCode = "AID00000001";
+      } else {
+        targetCode = formatCode("AID", adminCounter);
+        adminCounter++;
+      }
+
+      if (admin.userCode !== targetCode) {
+        await prisma.user.update({
+          where: { id: admin.id },
+          data: { userCode: targetCode },
+        });
+      }
+    }
+
+    await prisma.userSequence.upsert({
+      where: { name: "AID" },
+      update: { nextValue: adminCounter },
+      create: { name: "AID", nextValue: adminCounter },
+    });
+
+    // 2. Process Normal Users Pool (Freelancers + Clients)
+    const normalUsers = await prisma.user.findMany({
+      where: { role: { not: "admin" } },
+      orderBy: { createdAt: "asc" },
+      select: { id: true, userCode: true, username: true },
+    });
+
+    // Pass 1: Clear userCodes with short temporary prefix to avoid unique constraint collisions
+    for (let i = 0; i < normalUsers.length; i++) {
+      const u = normalUsers[i];
+      await prisma.user.update({
+        where: { id: u.id },
+        data: {
+          userCode: `TMP_${String(i).padStart(4, "0")}`,
+          username: u.username && u.username.toUpperCase().startsWith("FID") ? `TMP_UN_${String(i).padStart(4, "0")}` : u.username,
+        },
+      });
+    }
+
+    // Pass 2: Assign final sequential userCodes & default usernames
+    let fidCounter = 1;
+    for (const normalUser of normalUsers) {
+      const targetCode = formatCode("FID", fidCounter);
+      fidCounter++;
+
+      const isDefaultUsername =
+        !normalUser.username ||
+        normalUser.username.toUpperCase().startsWith("FID") ||
+        normalUser.username.toUpperCase().startsWith("AID") ||
+        normalUser.username.startsWith("TMP_UN_") ||
+        normalUser.username === normalUser.userCode;
+
+      await prisma.user.update({
+        where: { id: normalUser.id },
+        data: {
+          userCode: targetCode,
+          username: isDefaultUsername ? targetCode : normalUser.username,
+        },
+      });
+    }
+
+    await prisma.userSequence.upsert({
+      where: { name: "FID" },
+      update: { nextValue: fidCounter },
+      create: { name: "FID", nextValue: fidCounter },
+    });
+
+    logger.info("resequence_user_pools_success", {
+      totalAdmins: staffAdmins.length,
+      totalUsers: normalUsers.length,
+    });
+  } catch (err) {
+    logger.error("resequence_user_pools_error", { error: err.message });
+  }
 }
 
 module.exports = {
