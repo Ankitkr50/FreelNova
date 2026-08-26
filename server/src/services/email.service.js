@@ -255,13 +255,8 @@ const buildFreelNovaEmailHtml = ({
           </div>
 
           <!-- Footer -->
-          <div style="background-color: #f8fafc; padding: 26px 30px; border-top: 1px solid #e2e8f0; text-align: center;">
-            <div style="font-size: 12px; font-weight: 800; color: #1e293b; letter-spacing: 0.5px; margin-bottom: 8px;">
-              <a href="https://www.freelnova.com/company-info" class="no-line" style="color: #2563eb !important; text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important; font-weight: 800;">
-                <span class="no-line" style="color: #2563eb !important; text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important; font-weight: 800;">FreelNova - Global Freelance Marketplace</span>
-              </a>
-            </div>
-            <div style="font-size: 11px; color: #64748b; margin-bottom: 12px;">Powered by FreelNova Technologies Pvt Ltd • All Rights Reserved</div>
+          <div style="background-color: #f8fafc; padding: 24px 30px; border-top: 1px solid #e2e8f0; text-align: center;">
+            <div style="font-size: 11px; color: #64748b; margin-bottom: 10px;">Powered by FreelNova Technologies Pvt Ltd • All Rights Reserved</div>
             <div style="font-size: 11px; color: #2563eb; margin-bottom: 14px;">
               <a href="https://www.freelnova.com/company-info" class="no-line" style="color: #2563eb !important; text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important; font-weight: 700;">
                 <span class="no-line" style="color: #2563eb !important; text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important; font-weight: 700;">Privacy Policy</span>
