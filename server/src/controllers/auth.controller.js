@@ -12,7 +12,7 @@ const { verifyGoogleIdToken } = require("../services/google-auth.service");
 const { userCache } = require("../middleware/auth.middleware");
 const redis = require("../utils/redis");
 const sessionService = require("../services/session.service");
-const { resequenceUserPools } = require("../services/userCode.service");
+const { resequenceUserPools, generateNextUserCodeAtomic } = require("../services/userCode.service");
 
 const { logAdminAction } = require("../services/audit.service");
 const { AUDIT_ACTIONS } = require("../constants/permissions");
@@ -42,31 +42,7 @@ const generateOtp = () => String(crypto.randomInt(100_000, 1_000_000));
 const hashOtp = (otp) => crypto.createHash("sha256").update(otp).digest("hex");
 
 const generateNextUserCode = async (role = "freelancer") => {
-  const isTargetAdmin = role === "admin" || role === "ADMIN" || role === "SUPER_ADMIN";
-  const prefix = isTargetAdmin ? "AID" : "FID";
-  const count = await prisma.user.count({
-    where: {
-      userCode: { startsWith: prefix }
-    }
-  });
-  let nextNum = count + 1;
-
-  while (true) {
-    const candidate = `${prefix}${String(nextNum).padStart(8, "0")}`;
-    const existing = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { userCode: candidate },
-          { username: candidate },
-        ],
-      },
-      select: { id: true },
-    });
-    if (!existing) {
-      return candidate;
-    }
-    nextNum++;
-  }
+  return await generateNextUserCodeAtomic(role);
 };
 
 const register = catchAsync(async (req, res) => {
@@ -91,24 +67,28 @@ const register = catchAsync(async (req, res) => {
 
   const otp = generateOtp();
   const hashedPassword = await bcrypt.hash(password, 10);
-  const userCode = await generateNextUserCode(role);
-
-  const user = await prisma.user.create({
-    data: {
-      name,
-      email: formattedEmail,
-      userCode,
-      username: userCode,
-      password: hashedPassword,
-      role: role || "freelancer",
-      isEmailVerified: false,
-      emailOtp: hashOtp(otp),
-      emailOtpExpiresAt: new Date(Date.now() + 10 * 60 * 1000),
-      emailOtpAttempts: 0,
-    },
-  });
-
-  await resequenceUserPools();
+  let user;
+  try {
+    user = await prisma.user.create({
+      data: {
+        name,
+        email: formattedEmail,
+        userCode,
+        username: userCode,
+        password: hashedPassword,
+        role: role || "freelancer",
+        isEmailVerified: false,
+        emailOtp: hashOtp(otp),
+        emailOtpExpiresAt: new Date(Date.now() + 10 * 60 * 1000),
+        emailOtpAttempts: 0,
+      },
+    });
+  } catch (createErr) {
+    if (createErr.code === "P2002") {
+      throw new ApiError(409, "Email or username is already registered");
+    }
+    throw createErr;
+  }
 
   sendEmail({
     to: user.email,
@@ -437,7 +417,6 @@ const googleAuth = catchAsync(async (req, res) => {
         profileCompleted: false,
       },
     });
-    await resequenceUserPools();
   } else {
     const isUserAdmin = user.role === "admin";
     const needsCodeUpdate = !user.userCode || (isUserAdmin && user.userCode.startsWith("FID"));
@@ -456,7 +435,6 @@ const googleAuth = catchAsync(async (req, res) => {
         emailOtpAttempts: 0,
       },
     });
-    await resequenceUserPools();
   }
 
   // Reject login for suspended or blocked accounts

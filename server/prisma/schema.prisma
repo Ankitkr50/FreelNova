@@ -1250,5 +1250,11 @@ model UserAchievement {
   @@index([userId])
 }
 
+model UserSequence {
+  name      String   @id @db.VarChar(50)
+  nextValue Int      @default(1)
+  updatedAt DateTime @updatedAt @db.Timestamptz
+}
+
 
 

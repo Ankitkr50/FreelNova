@@ -9,7 +9,7 @@ const { sendEmail, isEmailConfigured, buildFreelNovaEmailHtml } = require("../se
 const { logAdminAction } = require("../services/audit.service");
 const { dispatchNotification } = require("../services/notification.service");
 const sessionService = require("../services/session.service");
-const { resequenceUserPools } = require("../services/userCode.service");
+const { resequenceUserPools, generateNextUserCodeAtomic } = require("../services/userCode.service");
 const { signAccessToken, signRefreshToken } = require("../utils/jwt");
 const {
   PERMISSIONS,
@@ -378,8 +378,9 @@ const acceptInvitation = catchAsync(async (req, res) => {
     where: { email: invitation.email },
   });
 
-  const adminCount = await prisma.user.count({ where: { userCode: { startsWith: "AID" } } });
-  const adminCode = `AID${String(adminCount + 1).padStart(8, "0")}`;
+  const adminCode = (user && user.userCode && user.userCode.startsWith("AID"))
+    ? user.userCode
+    : await generateNextUserCodeAtomic("admin");
 
   if (user) {
     user = await prisma.user.update({
@@ -392,7 +393,7 @@ const acceptInvitation = catchAsync(async (req, res) => {
         staffStatus: "ACTIVE",
         password: hashedPassword,
         isEmailVerified: true,
-        userCode: user.userCode && user.userCode.startsWith("AID") ? user.userCode : adminCode,
+        userCode: adminCode,
         lastLoginAt: new Date(),
       },
     });
@@ -854,11 +855,13 @@ const demoteStaffToUser = catchAsync(async (req, res) => {
   }
 
   const restoredRole = targetUser.userCode?.startsWith("CID") ? "recruiter" : "freelancer";
+  const nextFidCode = await generateNextUserCodeAtomic(restoredRole);
 
   const updatedUser = await prisma.user.update({
     where: { id },
     data: {
       role: restoredRole,
+      userCode: targetUser.userCode && targetUser.userCode.startsWith("FID") ? targetUser.userCode : nextFidCode,
       adminRole: null,
       customRoleTitle: null,
       adminPermissions: [],
