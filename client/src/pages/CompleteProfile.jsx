@@ -353,7 +353,7 @@ function CompleteProfile() {
         </div>
 
         <div className="p-8 sm:p-10 space-y-8">
-          {serverError && (
+          {serverError && !serverError.includes("cannot be changed") && (
             <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm font-semibold text-rose-800 animate-pulse">
               ⚠️ {serverError}
             </div>
