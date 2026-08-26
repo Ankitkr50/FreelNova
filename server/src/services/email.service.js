@@ -236,13 +236,13 @@ const buildFreelNovaEmailHtml = ({
         <!-- Footer -->
         <div style="background-color: #f8fafc; padding: 26px 30px; border-top: 1px solid #e2e8f0; text-align: center;">
           <div style="font-size: 12px; font-weight: 800; color: #1e293b; letter-spacing: 0.5px; margin-bottom: 8px;">
-            <a href="https://www.freelnova.com/company-info" style="color: #2563eb; text-decoration: none; font-weight: 800;">FreelNova - Global Freelance Marketplace</a>
+            <a href="https://www.freelnova.com/company-info" style="color: #2563eb !important; text-decoration: none !important; font-weight: 800;">FreelNova - Global Freelance Marketplace</a>
           </div>
           <div style="font-size: 11px; color: #64748b; margin-bottom: 12px;">Powered by FreelNova Technologies Pvt Ltd • All Rights Reserved</div>
           <div style="font-size: 11px; color: #2563eb; margin-bottom: 14px;">
-            <a href="https://www.freelnova.com/company-info" style="color: #2563eb; text-decoration: none; font-weight: 700;">Privacy Policy</a> • 
-            <a href="https://www.freelnova.com/company-info" style="color: #2563eb; text-decoration: none; font-weight: 700;">Terms & Conditions</a> • 
-            <a href="https://www.freelnova.com/company-info" style="color: #2563eb; text-decoration: none; font-weight: 700;">Company Info & Security</a>
+            <a href="https://www.freelnova.com/company-info" style="color: #2563eb !important; text-decoration: none !important; font-weight: 700;">Privacy Policy</a> • 
+            <a href="https://www.freelnova.com/company-info" style="color: #2563eb !important; text-decoration: none !important; font-weight: 700;">Terms & Conditions</a> • 
+            <a href="https://www.freelnova.com/company-info" style="color: #2563eb !important; text-decoration: none !important; font-weight: 700;">Company Info & Security</a>
           </div>
           <div style="font-size: 11px; color: #94a3b8; line-height: 1.5; max-width: 440px; margin: 0 auto;">${securityNote}</div>
         </div>
