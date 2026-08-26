@@ -190,65 +190,96 @@ const buildFreelNovaEmailHtml = ({
   securityNote = "This code is valid for single use. If you did not request this email, please secure your credentials immediately.",
 }) => {
   return `
-    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f1f5f9; padding: 36px 12px;">
-      <div style="max-width: 520px; margin: 0 auto; background-color: #ffffff; border-radius: 22px; overflow: hidden; box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12); border: 1px solid #cbd5e1;">
-        
-        <!-- Header Banner (Thick 1.7x Top & Bottom Vertical Height | Compact Left/Right Width) -->
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background: linear-gradient(135deg, #070a12 0%, #0f172a 35%, #1e40af 100%); padding: 55px 30px;">
-          <tr>
-            <td align="left" style="vertical-align: middle;">
-              <a href="https://www.freelnova.com/company-info" style="text-decoration: none; display: inline-block;">
-                <img src="https://www.freelnova.com/freelnova_logo.png" alt="FreelNova" style="height: 38px; width: auto; display: block; border: 0;" />
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        a, a:hover, a:visited, a:active, a:link {
+          text-decoration: none !important;
+          -webkit-text-decoration-line: none !important;
+          border-bottom: 0 !important;
+          box-shadow: none !important;
+        }
+        .no-line {
+          text-decoration: none !important;
+          -webkit-text-decoration-line: none !important;
+          border-bottom: 0 !important;
+        }
+      </style>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #f1f5f9;">
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f1f5f9; padding: 36px 12px;">
+        <div style="max-width: 520px; margin: 0 auto; background-color: #ffffff; border-radius: 22px; overflow: hidden; box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12); border: 1px solid #cbd5e1;">
+          
+          <!-- Header Banner (Thick 1.7x Top & Bottom Vertical Height | Compact Left/Right Width) -->
+          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background: linear-gradient(135deg, #070a12 0%, #0f172a 35%, #1e40af 100%); padding: 55px 30px;">
+            <tr>
+              <td align="left" style="vertical-align: middle;">
+                <a href="https://www.freelnova.com/company-info" class="no-line" style="text-decoration: none !important; -webkit-text-decoration-line: none !important; display: inline-block; border-bottom: 0 !important;">
+                  <span style="font-family: 'Sora', -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 34px; letter-spacing: -0.8px; color: #ffffff; text-decoration: none !important; -webkit-text-decoration-line: none !important;">
+                    <span style="font-weight: 800; color: #ffffff;">Freel</span><span style="font-weight: 400; color: #ffffff;">Nova</span><span style="display: inline-block; width: 10px; height: 10px; background-color: #3b82f6; border-radius: 50%; margin-left: 3px; vertical-align: baseline;"></span>
+                  </span>
+                </a>
+              </td>
+              <td align="right" style="vertical-align: middle;">
+                <a href="https://www.freelnova.com/company-info" class="no-line" style="text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important;">
+                  <span style="border: 1.5px solid rgba(255, 255, 255, 0.5); background-color: rgba(255, 255, 255, 0.18); color: #ffffff; padding: 7px 15px; border-radius: 9999px; font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;">TRUST THE PLATFORM</span>
+                </a>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Body Content -->
+          <div style="padding: 32px 30px 24px 30px;">
+            <h2 style="color: #0f172a; margin-top: 0; margin-bottom: 16px; font-size: 22px; font-weight: 800; letter-spacing: -0.4px;">${headline}</h2>
+            <p style="font-size: 15px; color: #334155; margin-bottom: 12px; line-height: 1.5;">Dear <strong>${recipientName}</strong>,</p>
+            <p style="font-size: 14px; color: #475569; margin-bottom: 24px; line-height: 1.6;">${introText}</p>
+
+            <!-- OTP Code Card -->
+            <div style="background-color: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 18px; padding: 24px; text-align: center; margin: 24px 0;">
+              <div style="font-size: 11px; font-weight: 800; letter-spacing: 2px; color: #64748b; margin-bottom: 12px; text-transform: uppercase;">${codeLabel}</div>
+              <div style="font-size: 38px; font-weight: 900; letter-spacing: 12px; color: #1d4ed8; font-family: Monaco, Consolas, monospace;">${codeValue}</div>
+              <div style="font-size: 12px; color: #94a3b8; margin-top: 14px;">${copyInstruction}</div>
+            </div>
+
+            <!-- What's Next Box -->
+            <div style="background-color: #eff6ff; border-left: 4px solid #2563eb; border-radius: 10px; padding: 18px 20px; margin: 24px 0;">
+              <div style="font-weight: 800; font-size: 13px; color: #1e40af; margin-bottom: 4px;">📩 What's next?</div>
+              <div style="font-size: 13px; color: #1d4ed8; line-height: 1.5;">${whatsNextText}</div>
+            </div>
+
+            <!-- Sign Off -->
+            <p style="font-size: 14px; color: #64748b; margin-top: 28px; margin-bottom: 4px;">Warm regards,</p>
+            <p style="font-size: 15px; font-weight: 800; color: #0f172a; margin-top: 0;">Team FreelNova</p>
+          </div>
+
+          <!-- Footer -->
+          <div style="background-color: #f8fafc; padding: 26px 30px; border-top: 1px solid #e2e8f0; text-align: center;">
+            <div style="font-size: 12px; font-weight: 800; color: #1e293b; letter-spacing: 0.5px; margin-bottom: 8px;">
+              <a href="https://www.freelnova.com/company-info" class="no-line" style="color: #2563eb !important; text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important; font-weight: 800;">
+                <span class="no-line" style="color: #2563eb !important; text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important; font-weight: 800;">FreelNova - Global Freelance Marketplace</span>
               </a>
-            </td>
-            <td align="right" style="vertical-align: middle;">
-              <a href="https://www.freelnova.com/company-info" style="text-decoration: none;">
-                <span style="border: 1.5px solid rgba(255, 255, 255, 0.5); background-color: rgba(255, 255, 255, 0.18); color: #ffffff; padding: 7px 15px; border-radius: 9999px; font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;">TRUST THE PLATFORM</span>
+            </div>
+            <div style="font-size: 11px; color: #64748b; margin-bottom: 12px;">Powered by FreelNova Technologies Pvt Ltd • All Rights Reserved</div>
+            <div style="font-size: 11px; color: #2563eb; margin-bottom: 14px;">
+              <a href="https://www.freelnova.com/company-info" class="no-line" style="color: #2563eb !important; text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important; font-weight: 700;">
+                <span class="no-line" style="color: #2563eb !important; text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important; font-weight: 700;">Privacy Policy</span>
+              </a> • 
+              <a href="https://www.freelnova.com/company-info" class="no-line" style="color: #2563eb !important; text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important; font-weight: 700;">
+                <span class="no-line" style="color: #2563eb !important; text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important; font-weight: 700;">Terms & Conditions</span>
+              </a> • 
+              <a href="https://www.freelnova.com/company-info" class="no-line" style="color: #2563eb !important; text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important; font-weight: 700;">
+                <span class="no-line" style="color: #2563eb !important; text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important; font-weight: 700;">Company Info & Security</span>
               </a>
-            </td>
-          </tr>
-        </table>
-
-        <!-- Body Content -->
-        <div style="padding: 32px 30px 24px 30px;">
-          <h2 style="color: #0f172a; margin-top: 0; margin-bottom: 16px; font-size: 22px; font-weight: 800; letter-spacing: -0.4px;">${headline}</h2>
-          <p style="font-size: 15px; color: #334155; margin-bottom: 12px; line-height: 1.5;">Dear <strong>${recipientName}</strong>,</p>
-          <p style="font-size: 14px; color: #475569; margin-bottom: 24px; line-height: 1.6;">${introText}</p>
-
-          <!-- OTP Code Card -->
-          <div style="background-color: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 18px; padding: 24px; text-align: center; margin: 24px 0;">
-            <div style="font-size: 11px; font-weight: 800; letter-spacing: 2px; color: #64748b; margin-bottom: 12px; text-transform: uppercase;">${codeLabel}</div>
-            <div style="font-size: 38px; font-weight: 900; letter-spacing: 12px; color: #1d4ed8; font-family: Monaco, Consolas, monospace;">${codeValue}</div>
-            <div style="font-size: 12px; color: #94a3b8; margin-top: 14px;">${copyInstruction}</div>
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; line-height: 1.5; max-width: 440px; margin: 0 auto;">${securityNote}</div>
           </div>
 
-          <!-- What's Next Box -->
-          <div style="background-color: #eff6ff; border-left: 4px solid #2563eb; border-radius: 10px; padding: 18px 20px; margin: 24px 0;">
-            <div style="font-weight: 800; font-size: 13px; color: #1e40af; margin-bottom: 4px;">📩 What's next?</div>
-            <div style="font-size: 13px; color: #1d4ed8; line-height: 1.5;">${whatsNextText}</div>
-          </div>
-
-          <!-- Sign Off -->
-          <p style="font-size: 14px; color: #64748b; margin-top: 28px; margin-bottom: 4px;">Warm regards,</p>
-          <p style="font-size: 15px; font-weight: 800; color: #0f172a; margin-top: 0;">Team FreelNova</p>
         </div>
-
-        <!-- Footer -->
-        <div style="background-color: #f8fafc; padding: 26px 30px; border-top: 1px solid #e2e8f0; text-align: center;">
-          <div style="font-size: 12px; font-weight: 800; color: #1e293b; letter-spacing: 0.5px; margin-bottom: 8px;">
-            <a href="https://www.freelnova.com/company-info" style="color: #2563eb !important; text-decoration: none !important; font-weight: 800;">FreelNova - Global Freelance Marketplace</a>
-          </div>
-          <div style="font-size: 11px; color: #64748b; margin-bottom: 12px;">Powered by FreelNova Technologies Pvt Ltd • All Rights Reserved</div>
-          <div style="font-size: 11px; color: #2563eb; margin-bottom: 14px;">
-            <a href="https://www.freelnova.com/company-info" style="color: #2563eb !important; text-decoration: none !important; font-weight: 700;">Privacy Policy</a> • 
-            <a href="https://www.freelnova.com/company-info" style="color: #2563eb !important; text-decoration: none !important; font-weight: 700;">Terms & Conditions</a> • 
-            <a href="https://www.freelnova.com/company-info" style="color: #2563eb !important; text-decoration: none !important; font-weight: 700;">Company Info & Security</a>
-          </div>
-          <div style="font-size: 11px; color: #94a3b8; line-height: 1.5; max-width: 440px; margin: 0 auto;">${securityNote}</div>
-        </div>
-
       </div>
-    </div>
+    </body>
+    </html>
   `;
 };
 
