@@ -114,17 +114,16 @@ const register = catchAsync(async (req, res) => {
     to: user.email,
     subject: "FreelNova Verification Code",
     text: `Your FreelNova 6-digit verification code is: ${otp}\n\nThis code is valid for 10 minutes. Do not share it with anyone.`,
-    html: `
-      <div style="font-family: Arial, sans-serif; padding: 20px; color: #1e293b; max-width: 500px;">
-        <h2 style="color: #2563eb; margin-bottom: 10px;">Welcome to FreelNova! 🎉</h2>
-        <p style="font-size: 16px; color: #334155;">Dear <strong>${user.name || "FreelNova Member"}</strong>,</p>
-        <p style="font-size: 15px; color: #334155;">Your 6-digit registration verification code is:</p>
-        <div style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #1e40af; background-color: #f1f5f9; padding: 16px 24px; border-radius: 8px; display: inline-block; margin: 15px 0;">
-          ${otp}
-        </div>
-        <p style="font-size: 14px; color: #64748b;">This code is valid for 10 minutes. Enter this code to verify your account.</p>
-      </div>
-    `,
+    html: buildFreelNovaEmailHtml({
+      headline: "Account Security Verification",
+      recipientName: user.name || user.email.split("@")[0],
+      introText: "Welcome to FreelNova! You are attempting to verify your new account. Please use the following secure 6-digit verification code to complete your registration:",
+      codeLabel: "REGISTRATION OTP CODE",
+      codeValue: otp,
+      copyInstruction: "Press and hold (phone) or triple-click (computer) the code above to copy it.",
+      whatsNextText: "Enter this OTP on the verification prompt to complete your sign-in session securely.",
+      securityNote: "This code is valid for 10 minutes. If you did not request this registration attempt, please ignore this email.",
+    }),
   })
     .then(() => logger.info("register_otp_send_success", { targetEmail: user.email }))
     .catch((err) => logger.error("register_otp_send_failed", { targetEmail: user.email, error: err.message }));
@@ -747,17 +746,16 @@ const sendLoginOtp = catchAsync(async (req, res) => {
     to: targetEmail,
     subject: "FreelNova Login Verification Code",
     text: `Your FreelNova 6-digit Login OTP code is: ${otp}\n\nThis code is valid for 10 minutes. Do not share this code with anyone.`,
-    html: `
-      <div style="font-family: Arial, sans-serif; padding: 20px; color: #1e293b; max-width: 500px;">
-        <h2 style="color: #2563eb; margin-bottom: 10px;">FreelNova Verification Code</h2>
-        <p style="font-size: 16px; color: #334155;">Dear <strong>${recipientDisplayName}</strong>,</p>
-        <p style="font-size: 15px; color: #334155;">Your 6-digit Login verification code is:</p>
-        <div style="font-size: 32px; font-weight: bold; letter-spacing: 6px; color: #1e40af; background-color: #f1f5f9; padding: 16px 24px; border-radius: 8px; display: inline-block; margin: 15px 0;">
-          ${otp}
-        </div>
-        <p style="font-size: 14px; color: #64748b;">This code is valid for 10 minutes. If you did not request this code, please ignore this email.</p>
-      </div>
-    `,
+    html: buildFreelNovaEmailHtml({
+      headline: "Account Security Verification",
+      recipientName: recipientDisplayName,
+      introText: "You are attempting to log in to your FreelNova account. Please use the following secure 6-digit verification code to complete your login:",
+      codeLabel: "LOGIN OTP CODE",
+      codeValue: otp,
+      copyInstruction: "Press and hold (phone) or triple-click (computer) the code above to copy it.",
+      whatsNextText: "Enter this OTP on the login prompt to complete your sign-in session securely.",
+      securityNote: "This code is valid for single use. If you did not request this login attempt, please secure your credentials immediately.",
+    }),
   })
     .then(() => logger.info("send_login_otp_success", { targetEmail }))
     .catch((emailErr) => logger.error("send_login_otp_failed", { targetEmail, error: emailErr.message }));
