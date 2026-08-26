@@ -408,7 +408,7 @@ const googleAuth = catchAsync(async (req, res) => {
     throw new ApiError(404, "No account found. Please register first.");
   }
 
-  if (user && role && user.role !== role) {
+  if (user && isRegister && role && user.role !== role) {
     throw new ApiError(400, `Registered as ${user.role}. Please select ${user.role}.`);
   }
 
