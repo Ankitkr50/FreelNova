@@ -300,18 +300,16 @@ Role: ${req.user.role}
 Message:
 ${msg}`;
 
-  const html = `
-    <div style="font-family: sans-serif; padding: 20px; color: #333; max-width: 600px; border: 1px solid #e2e8f0; border-radius: 12px;">
-      <h2 style="color: #1a56db; border-bottom: 1px solid #edf2f7; padding-bottom: 10px;">New FreelNova Support Ticket</h2>
-      <p style="margin: 15px 0;"><strong>Name:</strong> ${name}</p>
-      <p style="margin: 15px 0;"><strong>Email:</strong> ${email}</p>
-      <p style="margin: 15px 0;"><strong>User ID:</strong> ${req.user.id}</p>
-      <p style="margin: 15px 0;"><strong>User Role:</strong> ${req.user.role}</p>
-      <div style="background-color: #f7fafc; padding: 15px; border-radius: 8px; margin-top: 20px; font-style: italic;">
-        ${msg.replace(/\n/g, "<br/>")}
-      </div>
-    </div>
-  `;
+  const html = buildFreelNovaEmailHtml({
+    headline: "New Support Inquiry Ticket Received",
+    recipientName: "FreelNova Support Team",
+    introText: `A new support inquiry ticket was submitted by <strong>${name}</strong> (${email}):`,
+    codeLabel: "SUPPORT INQUIRY DETAILS",
+    codeValue: `User ID: ${req.user.id} | Role: ${req.user.role}\n\nMessage:\n${msg}`,
+    copyInstruction: "Inspect this support inquiry and respond to the user via FreelNova Admin Panel.",
+    whatsNextText: "Log in to Super Admin Panel to review and manage support tickets.",
+    securityNote: "This is an internal system support ticket notification.",
+  });
 
   try {
     await sendEmail({
