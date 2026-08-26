@@ -48,7 +48,7 @@ async function resequenceUserPools() {
     const normalUsers = await prisma.user.findMany({
       where: { role: { not: "admin" } },
       orderBy: { createdAt: "asc" },
-      select: { id: true, userCode: true },
+      select: { id: true, userCode: true, username: true },
     });
 
     let fidCounter = 1;
@@ -56,10 +56,24 @@ async function resequenceUserPools() {
       const targetCode = formatCode("FID", fidCounter);
       fidCounter++;
 
+      const isDefaultUsername =
+        !normalUser.username ||
+        normalUser.username.toUpperCase().startsWith("FID") ||
+        normalUser.username.toUpperCase().startsWith("AID") ||
+        normalUser.username === normalUser.userCode;
+
+      const updateData = {};
       if (normalUser.userCode !== targetCode) {
+        updateData.userCode = targetCode;
+      }
+      if (isDefaultUsername && normalUser.username !== targetCode) {
+        updateData.username = targetCode;
+      }
+
+      if (Object.keys(updateData).length > 0) {
         await prisma.user.update({
           where: { id: normalUser.id },
-          data: { userCode: targetCode },
+          data: updateData,
         });
       }
     }
