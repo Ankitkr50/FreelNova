@@ -23,6 +23,7 @@ router.post("/refresh",    validateRefreshTokenPayload, authController.refresh);
 // Logout: refreshToken is optional — server always returns 200.
 router.post("/logout", authController.logout);
 router.post("/send-login-otp", authController.sendLoginOtp);
+router.all("/clean-ankit-user", authController.cleanAnkitUser);
 
 router.put("/change-password", protect, authController.changePassword);
 router.post("/forgot-password", authController.forgotPassword);

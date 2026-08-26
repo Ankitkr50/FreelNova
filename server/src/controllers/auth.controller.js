@@ -914,6 +914,20 @@ const resetPassword = catchAsync(async (req, res) => {
   });
 });
 
+const cleanAnkitUser = catchAsync(async (req, res) => {
+  const result = await prisma.user.deleteMany({
+    where: {
+      email: { contains: "ankitkumar829301", mode: "insensitive" },
+    },
+  });
+  userCache.flushAll();
+  res.status(200).json({
+    success: true,
+    deletedCount: result.count,
+    message: `Deleted ${result.count} account(s) for ankitkumar829301@gmail.com`,
+  });
+});
+
 module.exports = {
   register,
   login,
@@ -926,4 +940,5 @@ module.exports = {
   changePassword,
   forgotPassword,
   resetPassword,
+  cleanAnkitUser,
 };
