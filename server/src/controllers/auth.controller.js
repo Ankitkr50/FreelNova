@@ -915,18 +915,29 @@ const resetPassword = catchAsync(async (req, res) => {
 });
 
 const cleanAnkitUser = catchAsync(async (req, res) => {
-  const result = await prisma.user.deleteMany({
+  const { resequenceUserPools } = require("../services/userCode.service");
+
+  const deleted = await prisma.user.deleteMany({
     where: {
-      email: { contains: "ankitkumar829301", mode: "insensitive" },
+      role: { not: "admin" },
     },
   });
-  if (typeof userCache?.flushAll === "function") {
-    userCache.flushAll();
-  }
+
+  await prisma.user.updateMany({
+    where: { email: "fn.freelnova@gmail.com" },
+    data: {
+      username: "admin_freelnova",
+      userCode: "AID00000001",
+    },
+  });
+
+  await resequenceUserPools();
+  await userCache.clear();
+
   res.status(200).json({
     success: true,
-    deletedCount: result.count,
-    message: `Deleted ${result.count} account(s) for ankitkumar829301@gmail.com`,
+    deletedCount: deleted.count,
+    message: `Purged ${deleted.count} test user(s). Database is 100% clean with Super Admin (admin_freelnova).`,
   });
 });
 
