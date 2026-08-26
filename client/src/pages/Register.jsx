@@ -484,8 +484,8 @@ function Register() {
         </button>
       </form>
 
-      <div className="mt-4">
-        <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-3">
+      <div className="mt-4 w-full">
+        <div className="flex w-full items-center justify-center rounded-2xl border border-slate-200 bg-white p-2 text-center shadow-sm transition hover:border-slate-300 hover:shadow-md">
           <GoogleAuthButton
             disabled={isBusy}
             onCredential={(credential) => {

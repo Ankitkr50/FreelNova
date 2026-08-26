@@ -39,7 +39,9 @@ function GoogleAuthButton({ text = "signin_with", onCredential, disabled = false
         }
 
         containerRef.current.innerHTML = "";
-        const width = Math.min(containerRef.current.offsetWidth || 360, 420);
+        const parentW = containerRef.current.parentElement?.offsetWidth || containerRef.current.offsetWidth || 360;
+        const width = Math.min(Math.max(240, parentW - 8), 400);
+
         window.google.accounts.id.renderButton(containerRef.current, {
           theme: "outline",
           size: "large",
@@ -55,23 +57,29 @@ function GoogleAuthButton({ text = "signin_with", onCredential, disabled = false
 
     if (window.google?.accounts?.id) {
       renderButton();
-      return;
+    } else {
+      let attempts = 0;
+      const interval = setInterval(() => {
+        attempts++;
+        if (window.google?.accounts?.id) {
+          clearInterval(interval);
+          renderButton();
+        } else if (attempts > 25) {
+          clearInterval(interval);
+          gsiLoadFailed = true;
+          setState(4);
+        }
+      }, 200);
     }
 
-    let attempts = 0;
-    const interval = setInterval(() => {
-      attempts++;
-      if (window.google?.accounts?.id) {
-        clearInterval(interval);
+    const handleResize = () => {
+      if (window.google?.accounts?.id && containerRef.current) {
         renderButton();
-      } else if (attempts > 25) {
-        clearInterval(interval);
-        gsiLoadFailed = true;
-        setState(4);
       }
-    }, 200);
+    };
 
-    return () => clearInterval(interval);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [clientId, disabled, text]);
 
   // ── No client ID configured ───────────────────────────────────────────────
@@ -116,7 +124,7 @@ function GoogleAuthButton({ text = "signin_with", onCredential, disabled = false
         </div>
       )}
       <div
-        className={`w-full transition-opacity duration-200 ${state === 0 ? "opacity-0" : "opacity-100"}`}
+        className={`w-full flex justify-center items-center transition-opacity duration-200 ${state === 0 ? "opacity-0" : "opacity-100"}`}
         ref={containerRef}
       />
     </div>
