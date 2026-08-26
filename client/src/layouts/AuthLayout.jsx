@@ -22,7 +22,7 @@ function AuthLayout() {
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),transparent_22%),linear-gradient(180deg,rgba(15,23,42,0.42),rgba(15,23,42,0.48))] px-4 py-8 sm:px-6 lg:px-8">
       <Container className="flex min-h-[calc(100vh-3rem)] items-center justify-center py-2 sm:py-4">
         <div className="grid w-full max-w-[880px] overflow-hidden rounded-[1.8rem] border border-white/20 bg-white/95 shadow-[0_32px_90px_rgba(15,23,42,0.28)] backdrop-blur-md transition-all duration-300 lg:grid-cols-[0.92fr_1fr]">
-          <section className="relative hidden min-h-[500px] overflow-hidden bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_28%),linear-gradient(180deg,#163d7a_0%,#1d4ed8_46%,#102a66_100%)] p-6 text-white lg:flex lg:flex-col lg:justify-between">
+          <section className="relative hidden overflow-hidden bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_28%),linear-gradient(180deg,#163d7a_0%,#1d4ed8_46%,#102a66_100%)] p-6 text-white lg:flex lg:flex-col lg:justify-between">
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.14))]" />
             <div className="relative z-10 max-w-sm">
               <Link to={ROUTES.HOME || "/"} className="inline-flex items-end gap-0.5 select-none transition hover:opacity-85 cursor-pointer" style={{ fontFamily: "'Sora', sans-serif" }}>
@@ -33,15 +33,16 @@ function AuthLayout() {
               <h2 className="mt-3 text-3xl xl:text-4xl font-bold leading-[1.08] tracking-[-0.04em]">
                 Start smarter, hire faster.
               </h2>
-              <p className="mt-3 text-sm leading-6 text-white/80">
+              <p className="mt-2 text-xs xl:text-sm leading-relaxed text-white/80">
                 Sign in or create your account to manage projects, discover talent, and keep everything moving.
               </p>
             </div>
 
-            <div className="relative z-10 mt-12">
-              <div className="rounded-[1.5rem] border border-white/10 bg-white/8 p-3 backdrop-blur-sm">
+            {/* Vertically Centered Image Card */}
+            <div className="relative z-10 my-4">
+              <div className="rounded-[1.5rem] border border-white/10 bg-white/8 p-3 backdrop-blur-sm shadow-xl">
                 <div
-                  className="mx-auto h-44 xl:h-48 max-w-sm rounded-[1.25rem] border border-white/10 bg-cover bg-center shadow-[0_12px_28px_rgba(2,6,23,0.18)]"
+                  className="mx-auto h-48 xl:h-52 max-w-sm rounded-[1.25rem] border border-white/10 bg-cover bg-center shadow-[0_12px_28px_rgba(2,6,23,0.18)]"
                   style={{
                     backgroundImage:
                       'linear-gradient(180deg,rgba(15,23,42,0.06),rgba(15,23,42,0.18)),url("https://images.pexels.com/photos/4050315/pexels-photo-4050315.jpeg?cs=srgb&dl=pexels-anna-shvets-4050315.jpg&fm=jpg")',
