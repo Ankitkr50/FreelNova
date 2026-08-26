@@ -216,12 +216,12 @@ const buildFreelNovaEmailHtml = ({
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background: linear-gradient(135deg, #070a12 0%, #0f172a 35%, #1e40af 100%); padding: 55px 30px;">
             <tr>
               <td align="left" style="vertical-align: middle;">
-                <a href="https://www.freelnova.com/company-info" class="no-line" style="text-decoration: none !important; -webkit-text-decoration-line: none !important; display: inline-block; border-bottom: 0 !important;">
-                  <div style="background-color: #ffffff; padding: 6px 16px; border-radius: 12px; display: inline-block; box-shadow: 0 4px 12px rgba(0,0,0,0.18);">
-                    <img src="https://raw.githubusercontent.com/Ankitkr50/FreelNova/main/client/public/freelnova_original_logo.png" alt="FreelNova" style="height: 28px; width: auto; display: block; border: 0;" />
-                  </div>
-                </a>
-              </td>
+              <a href="https://www.freelnova.com/company-info" class="no-line" style="text-decoration: none !important; -webkit-text-decoration-line: none !important; display: inline-block; border-bottom: 0 !important;">
+                <span style="font-family: 'Sora', -apple-system, BlinkMacSystemFont, Arial, sans-serif; font-size: 32px; letter-spacing: -0.8px; color: #ffffff; text-decoration: none !important; -webkit-text-decoration-line: none !important; display: inline-block;">
+                  <span style="font-weight: 800; color: #ffffff;">Freel</span><span style="font-weight: 400; color: #ffffff;">Nova</span><span style="display: inline-block; width: 9px; height: 9px; background-color: #3b82f6; border-radius: 50%; margin-left: 3px; vertical-align: baseline;"></span>
+                </span>
+              </a>
+            </td>
               <td align="right" style="vertical-align: middle;">
                 <a href="https://www.freelnova.com/company-info" class="no-line" style="text-decoration: none !important; -webkit-text-decoration-line: none !important; border-bottom: 0 !important;">
                   <span style="border: 1.5px solid rgba(255, 255, 255, 0.5); background-color: rgba(255, 255, 255, 0.18); color: #ffffff; padding: 7px 15px; border-radius: 9999px; font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;">TRUST THE PLATFORM</span>

@@ -22,7 +22,7 @@ function AuthLayout() {
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.18),transparent_22%),linear-gradient(180deg,rgba(15,23,42,0.42),rgba(15,23,42,0.48))] px-4 py-8 sm:px-6 lg:px-8">
       <Container className="flex min-h-[calc(100vh-3rem)] items-center justify-center py-2 sm:py-4">
         <div className="grid w-full max-w-[880px] overflow-hidden rounded-[1.8rem] border border-white/20 bg-white/95 shadow-[0_32px_90px_rgba(15,23,42,0.28)] backdrop-blur-md transition-all duration-300 lg:grid-cols-[0.92fr_1fr]">
-          <section className="relative hidden overflow-hidden bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_28%),linear-gradient(180deg,#163d7a_0%,#1d4ed8_46%,#102a66_100%)] p-6 text-white lg:flex lg:flex-col lg:justify-between">
+          <section className="relative hidden overflow-hidden bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_28%),linear-gradient(180deg,#163d7a_0%,#1d4ed8_46%,#102a66_100%)] p-6 text-white lg:flex lg:flex-col lg:justify-center lg:gap-6">
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.14))]" />
             <div className="relative z-10 max-w-sm">
               <Link to={ROUTES.HOME || "/"} className="inline-flex items-end gap-0.5 select-none transition hover:opacity-85 cursor-pointer" style={{ fontFamily: "'Sora', sans-serif" }}>
