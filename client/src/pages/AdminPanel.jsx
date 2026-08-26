@@ -1791,6 +1791,21 @@ function AdminPanel() {
                                 Unblock / Waive
                               </button>
                             )}
+                            {activeTab === "users" && (
+                              row.isVerified ? (
+                                <span className="rounded-md border border-emerald-200 bg-emerald-50 text-emerald-700 px-2 py-1 text-xs font-extrabold inline-flex items-center gap-1 select-none">
+                                  ✓ Verified
+                                </span>
+                              ) : (
+                                <button
+                                  className="rounded-md border border-emerald-500 bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 text-xs font-extrabold transition cursor-pointer shadow-xs"
+                                  onClick={() => handleAction("verify", row.id)}
+                                  type="button"
+                                >
+                                  ✓ Verify
+                                </button>
+                              )
+                            )}
                             {activeTab !== "users" && (
                               <>
                                 <button className="rounded-md border border-amber-300 px-2 py-1 text-xs text-amber-700 hover:bg-amber-50" onClick={() => handleAction("flag", row.id)} type="button">
@@ -1922,20 +1937,22 @@ function AdminPanel() {
                             })}
                           </p>
                           <div className="mt-3">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                handleAction(userDetails.user.isVerified ? "unverify" : "verify", userDetails.user.id);
-                                setSelectedDetailUserId(null);
-                              }}
-                              className={`rounded-xl px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-wider transition shadow-xs cursor-pointer border ${
-                                userDetails.user.isVerified
-                                  ? "bg-slate-100 text-slate-600 border-slate-300 hover:bg-slate-200"
-                                  : "bg-emerald-600 text-white border-emerald-700 hover:bg-emerald-700 shadow-emerald-200/50"
-                              }`}
-                            >
-                              {userDetails.user.isVerified ? "Unverify User" : "✓ Approve & Verify Profile"}
-                            </button>
+                            {userDetails.user.isVerified ? (
+                              <span className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-700 px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-wider select-none">
+                                ✓ Verified Profile
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  handleAction("verify", userDetails.user.id);
+                                  setSelectedDetailUserId(null);
+                                }}
+                                className="rounded-xl px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-wider transition shadow-xs cursor-pointer border bg-emerald-600 text-white border-emerald-700 hover:bg-emerald-700 shadow-emerald-200/50"
+                              >
+                                ✓ Approve & Verify Profile
+                              </button>
+                            )}
                           </div>
                         </div>
                         <div className="sm:text-right">
