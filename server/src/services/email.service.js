@@ -180,30 +180,70 @@ const sendEmail = async ({ to, subject, html, text }) => {
 };
 
 const buildFreelNovaEmailHtml = ({
-  headline = "Verification Code",
+  headline = "Account Security Verification",
   recipientName = "User",
-  introText = "Please find your secure code below:",
-  codeLabel = "VERIFICATION CODE",
+  introText = "Please find your secure verification code below:",
+  codeLabel = "OTP CODE",
   codeValue = "",
   copyInstruction = "Press and hold (phone) or triple-click (computer) the code above to copy it.",
-  whatsNextText = "Enter this code on the FreelNova verification screen to complete your request.",
-  securityNote = "If you didn't request this email, you can safely ignore it.",
+  whatsNextText = "Enter this code on the prompt to complete your request securely.",
+  securityNote = "This code is valid for single use. If you did not request this email, please secure your credentials immediately.",
 }) => {
   return `
-    <div style="font-family: Arial, sans-serif; padding: 20px; color: #1e293b; max-width: 500px; border: 1px solid #e2e8f0; border-radius: 12px; background-color: #ffffff;">
-      <div style="margin-bottom: 20px; border-bottom: 2px solid #2563eb; padding-bottom: 10px;">
-        <span style="font-size: 20px; font-weight: bold; color: #2563eb;">FreelNova</span>
-        <span style="font-size: 12px; color: #64748b; margin-left: 8px;">www.freelnova.com</span>
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; padding: 30px 10px;">
+      <div style="max-width: 560px; margin: 0 auto; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); border: 1px solid #e2e8f0;">
+        
+        <!-- Header Banner -->
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background: linear-gradient(135deg, #0f172a 0%, #1e40af 100%); padding: 24px 32px;">
+          <tr>
+            <td align="left">
+              <span style="font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px;">FreelNova<span style="color: #60a5fa;">.</span></span>
+            </td>
+            <td align="right">
+              <span style="border: 1px solid rgba(255, 255, 255, 0.35); background-color: rgba(255, 255, 255, 0.12); color: #ffffff; padding: 5px 14px; border-radius: 9999px; font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;">TRUST THE PLATFORM</span>
+            </td>
+          </tr>
+        </table>
+
+        <!-- Body Content -->
+        <div style="padding: 32px 32px 24px 32px;">
+          <h2 style="color: #0f172a; margin-top: 0; margin-bottom: 16px; font-size: 22px; font-weight: 800; letter-spacing: -0.3px;">${headline}</h2>
+          <p style="font-size: 15px; color: #334155; margin-bottom: 12px; line-height: 1.5;">Dear <strong>${recipientName}</strong>,</p>
+          <p style="font-size: 14px; color: #475569; margin-bottom: 24px; line-height: 1.6;">${introText}</p>
+
+          <!-- OTP Code Card -->
+          <div style="background-color: #f8fafc; border: 1.5px dashed #cbd5e1; border-radius: 16px; padding: 24px; text-align: center; margin: 24px 0;">
+            <div style="font-size: 11px; font-weight: 800; letter-spacing: 2px; color: #64748b; margin-bottom: 12px; text-transform: uppercase;">${codeLabel}</div>
+            <div style="font-size: 36px; font-weight: 900; letter-spacing: 12px; color: #1d4ed8; font-family: monospace;">${codeValue}</div>
+            <div style="font-size: 12px; color: #94a3b8; margin-top: 14px;">${copyInstruction}</div>
+          </div>
+
+          <!-- What's Next Box -->
+          <div style="background-color: #eff6ff; border-left: 4px solid #2563eb; border-radius: 10px; padding: 16px 20px; margin: 24px 0;">
+            <div style="font-weight: 700; font-size: 13px; color: #1e40af; margin-bottom: 4px;">📩 What's next?</div>
+            <div style="font-size: 13px; color: #1d4ed8; line-height: 1.5;">${whatsNextText}</div>
+          </div>
+
+          <!-- Sign Off -->
+          <p style="font-size: 14px; color: #64748b; margin-top: 28px; margin-bottom: 4px;">Warm regards,</p>
+          <p style="font-size: 15px; font-weight: 800; color: #0f172a; margin-top: 0;">Team FreelNova</p>
+        </div>
+
+        <!-- Footer -->
+        <div style="background-color: #f8fafc; padding: 24px 32px; border-top: 1px solid #f1f5f9; text-align: center;">
+          <div style="font-size: 11px; font-weight: 800; color: #475569; letter-spacing: 1.5px; margin-bottom: 6px; text-transform: uppercase;">
+            TRUST THE PLATFORM • <a href="https://www.freelnova.com" style="color: #2563eb; text-decoration: none;">FREELNOVA</a>
+          </div>
+          <div style="font-size: 11px; color: #94a3b8; margin-bottom: 12px;">Powered by FreelNova Technologies Pvt Ltd • All Rights Reserved</div>
+          <div style="font-size: 11px; color: #2563eb; margin-bottom: 14px;">
+            <a href="https://www.freelnova.com/privacy" style="color: #2563eb; text-decoration: underline;">Privacy Policy</a> • 
+            <a href="https://www.freelnova.com/terms" style="color: #2563eb; text-decoration: underline;">Terms & Conditions</a> • 
+            <a href="mailto:freelnova07@gmail.com" style="color: #2563eb; text-decoration: underline;">Support</a>
+          </div>
+          <div style="font-size: 11px; color: #94a3b8; line-height: 1.5; max-width: 440px; margin: 0 auto;">${securityNote}</div>
+        </div>
+
       </div>
-      <h2 style="color: #1e40af; margin-bottom: 10px; font-size: 20px;">${headline}</h2>
-      <p style="font-size: 15px; color: #334155;">Dear <strong>${recipientName}</strong>,</p>
-      <p style="font-size: 14px; color: #334155;">${introText}</p>
-      <div style="font-size: 32px; font-weight: bold; letter-spacing: 8px; color: #1e40af; background-color: #f8fafc; border: 1px dashed #cbd5e1; padding: 16px 24px; border-radius: 8px; display: inline-block; margin: 15px 0; text-align: center;">
-        ${codeValue}
-      </div>
-      <p style="font-size: 13px; color: #64748b;">${whatsNextText}</p>
-      <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-      <p style="font-size: 12px; color: #94a3b8; text-align: center;">${securityNote} | <a href="https://www.freelnova.com" style="color: #2563eb; text-decoration: none;">https://www.freelnova.com</a></p>
     </div>
   `;
 };
