@@ -137,26 +137,28 @@ const updateProfile = catchAsync(async (req, res) => {
   const updates = req.validatedBody || {};
 
   if (updates.username) {
+    const cleanUsername = updates.username.toLowerCase().trim();
     const currentUserRecord = await prisma.user.findUnique({
       where: { id: userId },
-      select: { username: true }
+      select: { username: true, profileCompleted: true }
     });
-    if (currentUserRecord?.username) {
-      if (currentUserRecord.username === updates.username) {
+    if (currentUserRecord?.profileCompleted && currentUserRecord?.username) {
+      if (currentUserRecord.username === cleanUsername) {
         delete updates.username;
       } else {
-        throw new ApiError(400, "Username can only be set once and cannot be changed");
+        throw new ApiError(400, "Username can only be set once after registration is completed and cannot be changed");
       }
     } else {
       const existing = await prisma.user.findFirst({
         where: {
-          username: updates.username,
+          username: cleanUsername,
           id: { not: userId }
         }
       });
       if (existing) {
         throw new ApiError(400, "Username is already taken by another user");
       }
+      updates.username = cleanUsername;
     }
   }
 
@@ -348,22 +350,24 @@ const completeProfile = catchAsync(async (req, res) => {
   }
 
   if (updates.username) {
-    if (existingUser.username) {
-      if (existingUser.username === updates.username) {
+    const cleanUsername = updates.username.toLowerCase().trim();
+    if (existingUser.profileCompleted && existingUser.username) {
+      if (existingUser.username === cleanUsername) {
         delete updates.username;
       } else {
-        throw new ApiError(400, "Username can only be set once and cannot be changed");
+        throw new ApiError(400, "Username can only be set once after registration is completed and cannot be changed");
       }
     } else {
       const existing = await prisma.user.findFirst({
         where: {
-          username: updates.username,
+          username: cleanUsername,
           id: { not: userId }
         }
       });
       if (existing) {
         throw new ApiError(400, "Username is already taken by another user");
       }
+      updates.username = cleanUsername;
     }
   }
 

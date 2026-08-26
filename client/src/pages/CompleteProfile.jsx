@@ -494,7 +494,12 @@ function CompleteProfile() {
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-1">
-                    <label className="block text-xs font-semibold text-slate-700">Choose Username (Unique)</label>
+                    <div className="flex items-center justify-between">
+                      <label className="block text-xs font-semibold text-slate-700">Choose Username (Unique)</label>
+                      <span className="text-[10px] text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">
+                        ✏️ Editable now • Locks after onboarding
+                      </span>
+                    </div>
                     <div className="relative">
                       <input
                         type="text"
@@ -516,6 +521,9 @@ function CompleteProfile() {
                       </div>
                     </div>
                     {errors.username && <p className="text-[10px] font-medium text-rose-600">{errors.username}</p>}
+                    {!errors.username && usernameStatus === "available" && (
+                      <p className="text-[10px] font-bold text-emerald-600">✓ Username is available</p>
+                    )}
                     {!errors.username && usernameStatus === "taken" && (
                       <p className="text-[10px] font-bold text-rose-600">✗ Username is already taken</p>
                     )}
