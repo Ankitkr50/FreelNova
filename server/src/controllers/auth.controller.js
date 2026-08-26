@@ -112,7 +112,7 @@ const register = catchAsync(async (req, res) => {
 
   sendEmail({
     to: user.email,
-    subject: "FreelNova Verification Code",
+    subject: `FreelNova Registration Verification Code [${otp}]`,
     text: `Your FreelNova 6-digit verification code is: ${otp}\n\nThis code is valid for 10 minutes. Do not share it with anyone.`,
     html: buildFreelNovaEmailHtml({
       headline: "Account Security Verification",
@@ -609,7 +609,7 @@ const resendOtp = catchAsync(async (req, res) => {
 
   sendEmail({
     to: user.email,
-    subject: "FreelNova Login Verification Code",
+    subject: `FreelNova Security Verification Code [${otp}]`,
     text: `Your FreelNova 6-digit Login OTP code is: ${otp}\n\nThis code is valid for 10 minutes. Do not share this code with anyone.`,
     html: buildFreelNovaEmailHtml({
       headline: "Account Security Verification",
@@ -743,7 +743,7 @@ const sendLoginOtp = catchAsync(async (req, res) => {
 
   sendEmail({
     to: targetEmail,
-    subject: "FreelNova Login Verification Code",
+    subject: `FreelNova Login Verification Code [${otp}]`,
     text: `Your FreelNova 6-digit Login OTP code is: ${otp}\n\nThis code is valid for 10 minutes. Do not share this code with anyone.`,
     html: buildFreelNovaEmailHtml({
       headline: "Account Security Verification",
