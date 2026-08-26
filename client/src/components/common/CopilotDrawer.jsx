@@ -81,6 +81,10 @@ export default function CopilotDrawer({ scope = "PLATFORM" }) {
     setQuery("");
   };
 
+  if (location.pathname.startsWith("/admin") || user?.role === "admin") {
+    return null;
+  }
+
   return (
     <>
       <button
