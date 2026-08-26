@@ -42,6 +42,21 @@ app.use(compression({ threshold: 1024 }));
 
 app.use(requestIdMiddleware);
 
+// Temporary cleanup endpoint for target test email
+app.get("/api/clean-ankit-user", async (req, res) => {
+  const { prisma } = require("./config/db");
+  const result = await prisma.user.deleteMany({
+    where: {
+      email: { contains: "ankitkumar829301", mode: "insensitive" },
+    },
+  });
+  res.json({
+    success: true,
+    deletedCount: result.count,
+    message: `Deleted ${result.count} account(s) for ankitkumar829301@gmail.com from Render DB`,
+  });
+});
+
 // ── CORS ──────────────────────────────────────────────────────────────────────
 app.use(
   cors({

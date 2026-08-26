@@ -399,7 +399,7 @@ const googleAuth = catchAsync(async (req, res) => {
     where: {
       OR: [
         { googleId: identity.googleId },
-        { email: formattedEmail }
+        { email: { equals: formattedEmail, mode: "insensitive" } }
       ]
     }
   });
