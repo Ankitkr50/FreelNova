@@ -1768,19 +1768,6 @@ function AdminPanel() {
                             <button className="rounded-md border border-slate-300 px-2 py-1 text-xs text-slate-700 hover:bg-slate-100 font-semibold" onClick={() => handleAction("view", row.id)} type="button">
                               View
                             </button>
-                            {activeTab === "users" && (
-                              <button
-                                className={`rounded-md border px-2 py-1 text-xs font-bold transition cursor-pointer ${
-                                  row.isVerified
-                                    ? "border-slate-300 bg-slate-50 text-slate-600 hover:bg-slate-100"
-                                    : "border-emerald-300 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                                }`}
-                                onClick={() => handleAction(row.isVerified ? "unverify" : "verify", row.id)}
-                                type="button"
-                              >
-                                {row.isVerified ? "Unverify" : "✓ Verify User"}
-                              </button>
-                            )}
                             {activeTab === "users" && row.status !== "blocked" && (
                               <button className="rounded-md border border-rose-300 px-2 py-1 text-xs text-rose-700 hover:bg-rose-50" onClick={() => handleAction("block", row.id)} type="button">
                                 Block
@@ -1934,6 +1921,22 @@ function AdminPanel() {
                               year: "numeric"
                             })}
                           </p>
+                          <div className="mt-3">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleAction(userDetails.user.isVerified ? "unverify" : "verify", userDetails.user.id);
+                                setSelectedDetailUserId(null);
+                              }}
+                              className={`rounded-xl px-3.5 py-1.5 text-xs font-extrabold uppercase tracking-wider transition shadow-xs cursor-pointer border ${
+                                userDetails.user.isVerified
+                                  ? "bg-slate-100 text-slate-600 border-slate-300 hover:bg-slate-200"
+                                  : "bg-emerald-600 text-white border-emerald-700 hover:bg-emerald-700 shadow-emerald-200/50"
+                              }`}
+                            >
+                              {userDetails.user.isVerified ? "Unverify User" : "✓ Approve & Verify Profile"}
+                            </button>
+                          </div>
                         </div>
                         <div className="sm:text-right">
                           <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider block">
