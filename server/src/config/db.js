@@ -10,9 +10,10 @@ const pool = new Pool({
   ssl: env.databaseUrl?.includes("sslmode=") || env.nodeEnv === "production"
     ? { rejectUnauthorized: false }
     : undefined,
-  max: 10,
-  idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 10000,
+  max: 15,
+  idleTimeoutMillis: 60000,
+  connectionTimeoutMillis: 30000,
+  keepAlive: true,
 });
 
 // Prevent unhandled ECONNRESET drops from killing nodemon/server process

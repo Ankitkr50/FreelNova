@@ -177,7 +177,11 @@ function Login() {
       }
     },
     onError: (error) => {
-      setStatus({ type: "error", text: error?.response?.data?.message || "Google login failed. Please try again." });
+      const isNetError = error?.code === "ERR_NETWORK" || !error?.response;
+      const msg = isNetError
+        ? "Server connection resetting. Please click Google Sign-In again."
+        : error?.response?.data?.message || "Google login failed. Please try again.";
+      setStatus({ type: "error", text: msg });
     },
   });
 
