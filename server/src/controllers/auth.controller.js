@@ -394,25 +394,18 @@ const googleAuth = catchAsync(async (req, res) => {
     throw new ApiError(400, "Your Google account email is not verified");
   }
 
+  const formattedEmail = String(identity.email).toLowerCase().trim();
+
   let user = await prisma.user.findFirst({
     where: {
       OR: [
         { googleId: identity.googleId },
-        { email: identity.email }
+        { email: formattedEmail }
       ]
     }
   });
 
-  if (!user && !isRegister) {
-    throw new ApiError(404, "No account found. Please register first.");
-  }
-
-  if (user && isRegister && role && user.role !== role) {
-    throw new ApiError(400, `Registered as ${user.role}. Please select ${user.role}.`);
-  }
-
   if (!user) {
-    const formattedEmail = String(identity.email).toLowerCase().trim();
     if (role === "admin") {
       const isAllowedAdmin = env.adminEmails.includes(formattedEmail);
       if (!isAllowedAdmin) {
@@ -425,7 +418,7 @@ const googleAuth = catchAsync(async (req, res) => {
     user = await prisma.user.create({
       data: {
         name: identity.name,
-        email: identity.email,
+        email: formattedEmail,
         userCode: googleUserCode,
         username: googleUserCode,
         password: dummyPassword,
@@ -433,6 +426,7 @@ const googleAuth = catchAsync(async (req, res) => {
         authProvider: "google",
         googleId: identity.googleId,
         isEmailVerified: true,
+        profileCompleted: false,
       },
     });
     await resequenceUserPools();
