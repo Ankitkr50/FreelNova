@@ -574,43 +574,45 @@ function Home() {
         {/* 5. Left-Side Dark Shield for 100% Crisp Heading Readability */}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,#020817_0%,#020817_32%,rgba(2,8,23,0.85)_55%,rgba(2,8,23,0.25)_80%,transparent_100%)] pointer-events-none" />
 
-        <div className="relative min-h-[98vh] px-5 py-12 sm:px-6 md:px-10 md:py-16 lg:px-14 lg:py-20">
+        <div className="relative min-h-0 sm:min-h-[85vh] px-4 py-10 sm:px-6 md:px-10 md:py-16 lg:px-14 lg:py-20">
           <div className="w-full">
             <h1
-              className="max-w-3xl text-4xl font-bold leading-[1.06] tracking-[-0.02em] text-white md:text-6xl lg:text-7xl"
+              className="max-w-3xl text-3xl font-bold leading-[1.1] tracking-[-0.02em] text-white sm:text-5xl md:text-6xl lg:text-7xl"
               style={{ fontFamily: "'Sora', sans-serif" }}
             >
               Empowering Skilled Talent, Delivering Proven Results.
             </h1>
-            <p className="mt-5 max-w-2xl text-base leading-7 text-slate-200 md:mt-6 md:text-lg md:leading-8">
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-200 sm:mt-5 sm:text-base sm:leading-7 md:mt-6 md:text-lg md:leading-8">
               Search for services, hire faster, and manage freelance work with a modern marketplace
               experience for students, recruiters, and growing teams.
             </p>
-            <div className="mt-24 flex w-full flex-col gap-3 rounded-[1.75rem] border border-white/15 bg-white/14 p-3 shadow-[0_18px_50px_rgba(15,23,42,0.22)] backdrop-blur-md sm:mt-24 sm:flex-row">
+            <div className="mt-8 flex w-full max-w-3xl flex-col gap-2.5 rounded-[1.5rem] border border-white/15 bg-white/14 p-2.5 shadow-[0_18px_50px_rgba(15,23,42,0.22)] backdrop-blur-md sm:mt-12 sm:flex-row sm:rounded-[1.75rem] sm:p-3">
               <input
-                className="w-full flex-1 rounded-[1.25rem] border border-white/10 bg-white/92 px-5 py-4 text-base text-slate-900 outline-none placeholder:text-slate-500 focus:border-blue-400 focus:ring-4 focus:ring-blue-200"
+                className="w-full flex-1 rounded-[1.1rem] border border-white/10 bg-white/92 px-4 py-3 text-sm text-slate-900 outline-none placeholder:text-slate-500 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 sm:rounded-[1.25rem] sm:px-5 sm:py-4 sm:text-base"
                 placeholder="Search for any service..."
                 type="text"
               />
               <Link
-                className="inline-flex items-center justify-center rounded-[1.25rem] bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4 text-base font-semibold text-white shadow-[0_16px_30px_rgba(37,99,235,0.28)] transition hover:-translate-y-0.5 hover:brightness-[1.02]"
+                className="inline-flex items-center justify-center rounded-[1.1rem] bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgba(37,99,235,0.28)] transition hover:-translate-y-0.5 hover:brightness-[1.02] sm:rounded-[1.25rem] sm:py-4 sm:text-base shrink-0"
                 to={ROUTES.PROJECTS}
               >
                 Search
               </Link>
             </div>
 
-            <div className="mt-10 flex flex-wrap items-center gap-3 md:mt-12 md:gap-4 lg:flex-nowrap">
-              <p className="shrink-0 text-sm font-semibold uppercase tracking-[0.2em] text-slate-200">Trusted By</p>
-              {trustedBy.map((brand) => (
-                <span
-                  key={brand.name}
-                  className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/12 px-4 py-2 text-sm font-medium text-white shadow-sm backdrop-blur-sm"
-                >
-                  <span className="shrink-0 text-white">{brand.icon}</span>
-                  <span>{brand.name}</span>
-                </span>
-              ))}
+            <div className="mt-8 flex max-w-full flex-wrap items-center gap-2.5 sm:mt-10 sm:gap-3 md:mt-12 md:gap-4">
+              <p className="shrink-0 text-xs font-bold uppercase tracking-[0.2em] text-slate-300 sm:text-sm">Trusted By</p>
+              <div className="flex max-w-full flex-wrap items-center gap-2 overflow-x-auto pb-1 sm:gap-3">
+                {trustedBy.map((brand) => (
+                  <span
+                    key={brand.name}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/12 px-3 py-1.5 text-xs font-medium text-white shadow-sm backdrop-blur-sm sm:gap-2 sm:px-4 sm:py-2 sm:text-sm shrink-0"
+                  >
+                    <span className="shrink-0 text-white">{brand.icon}</span>
+                    <span>{brand.name}</span>
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>

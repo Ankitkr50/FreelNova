@@ -7,7 +7,7 @@ function BrandMark({ compact = false, className = "" }) {
   return (
     <Link
       to={targetRoute}
-      className={`inline-flex items-center select-none ${compact ? "-ml-8" : "-ml-11"} ${className}`.trim()}
+      className={`inline-flex items-center select-none ${className}`.trim()}
     >
       <span
         className={`${compact ? "text-[1.85rem] tracking-tight" : "text-5xl tracking-tighter"
