@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { profileApi } from "../api/profile.api.js";
+import { getAccessToken } from "../utils/authStorage.js";
 
 export const PROFILE_QUERY_KEY = ["profile"];
 
@@ -27,12 +28,14 @@ function normalizeProfileResponse(response) {
 }
 
 export function useProfileQuery(userId) {
+  const token = getAccessToken();
   return useQuery({
     queryKey: userId ? [...PROFILE_QUERY_KEY, userId] : PROFILE_QUERY_KEY,
     queryFn: async () => {
       const response = await profileApi.getProfile(userId);
       return normalizeProfileResponse(response);
     },
+    enabled: Boolean(userId || token),
     staleTime: 60000,
   });
 }

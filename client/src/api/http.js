@@ -49,7 +49,13 @@ http.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    const accessToken = getAccessToken();
     const refreshToken = getRefreshToken();
+
+    if (!accessToken && !refreshToken) {
+      return Promise.reject(error);
+    }
+
     if (!refreshToken) {
       clearAuthSession();
       return Promise.reject(error);
