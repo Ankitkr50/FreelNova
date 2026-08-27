@@ -583,10 +583,25 @@ function Navbar() {
 
         {isMenuOpen ? (
           <div className="mt-3 flex flex-col gap-2 border-t border-slate-200 pt-3 md:hidden">
+            <form className="mb-2 flex w-full items-center gap-2" onSubmit={(e) => { setIsMenuOpen(false); handleSearchSubmit(e); }}>
+              <input
+                className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-blue-400 focus:bg-white"
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Search services, skills, or projects..."
+                type="text"
+                value={search}
+              />
+              <button
+                className="rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 shrink-0"
+                type="submit"
+              >
+                Search
+              </button>
+            </form>
             {menu.map((item) =>
               item.cta ? (
                 <NavLink
-                  className="rounded-2xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-800 transition hover:bg-slate-50"
+                  className="rounded-2xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-800 transition hover:bg-slate-50 text-center"
                   key={item.label}
                   onClick={() => setIsMenuOpen(false)}
                   to={item.to}
@@ -600,25 +615,33 @@ function Navbar() {
               ),
             )}
             {isAuthenticated ? (
-              <>
+              <div className="border-t border-slate-100 pt-2 space-y-1">
+                <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-xl mb-1">
+                  <div className="h-8 w-8 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs">
+                    {initials}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold text-slate-900 truncate">{user?.name || "User"}</p>
+                    <p className="text-[10px] text-blue-600 font-semibold truncate">@{getDisplayUsername(user)}</p>
+                  </div>
+                </div>
                 <NavLink className={linkClass} onClick={() => setIsMenuOpen(false)} to={ROUTES.MESSAGES}>
-                  Messages
+                  💬 Messages
                 </NavLink>
                 <NavLink className={linkClass} onClick={() => setIsMenuOpen(false)} to={ROUTES.PROFILE}>
-                  My Lists
+                  👤 My Profile & Settings
                 </NavLink>
                 <button
-                  className="w-fit rounded-xl border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100"
+                  className="w-full rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm font-semibold text-rose-700 transition hover:bg-rose-100 mt-2 text-left"
                   onClick={() => {
                     handleLogout();
                     setIsMenuOpen(false);
                   }}
                   type="button"
                 >
-                  Sign out
-
+                  🚪 Sign out
                 </button>
-              </>
+              </div>
             ) : null}
           </div>
         ) : null}
