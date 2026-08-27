@@ -25,8 +25,8 @@ function AuthLayout() {
           <section className="relative hidden overflow-hidden bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_28%),linear-gradient(180deg,#163d7a_0%,#1d4ed8_46%,#102a66_100%)] p-6 text-white lg:flex lg:flex-col lg:justify-between">
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.02),rgba(0,0,0,0.14))]" />
             
-            {/* Top Block: Logo & Main Heading (Moved UP to top) */}
-            <div className="relative z-10 max-w-sm pt-2">
+            {/* Top Block: ONLY Logo & Main Heading */}
+            <div className="relative z-10 max-w-sm pt-1">
               <Link to={ROUTES.HOME || "/"} className="inline-flex items-end gap-0.5 select-none transition hover:opacity-85 cursor-pointer" style={{ fontFamily: "'Sora', sans-serif" }}>
                 <span className="text-2xl font-bold text-white tracking-tight">Freel</span>
                 <span className="text-2xl font-normal text-white -ml-0.5 tracking-tight">Nova</span>
@@ -35,13 +35,13 @@ function AuthLayout() {
               <h2 className="mt-3 text-3xl xl:text-4xl font-bold leading-[1.08] tracking-[-0.04em]">
                 Start smarter, hire faster.
               </h2>
-              <p className="mt-2 text-xs xl:text-sm leading-relaxed text-white/80">
-                Sign in or create your account to manage projects, discover talent, and keep everything moving.
-              </p>
             </div>
 
-            {/* Bottom Block: Image Card & Subtitle */}
-            <div className="relative z-10 my-auto py-2">
+            {/* Middle/Bottom Block: Description Paragraph, Image Card & Footer Text */}
+            <div className="relative z-10 my-auto py-2 space-y-3">
+              <p className="text-xs xl:text-sm leading-relaxed text-white/80">
+                Sign in or create your account to manage projects, discover talent, and keep everything moving.
+              </p>
               <div className="rounded-[1.5rem] border border-white/10 bg-white/8 p-3 backdrop-blur-sm shadow-xl">
                 <div
                   className="mx-auto h-44 xl:h-48 max-w-sm rounded-[1.25rem] border border-white/10 bg-cover bg-center shadow-[0_12px_28px_rgba(2,6,23,0.18)]"
@@ -51,7 +51,7 @@ function AuthLayout() {
                   }}
                 />
               </div>
-              <p className="mt-3 text-xs leading-5 text-white/80">{content.footer}</p>
+              <p className="text-xs leading-5 text-white/80">{content.footer}</p>
             </div>
           </section>
 
