@@ -375,11 +375,7 @@ const login = catchAsync(async (req, res) => {
 });
 
 const googleAuth = catchAsync(async (req, res) => {
-  const { credential, role, isRegister } = req.validatedBody || req.body || {};
-
-  if (role === "admin") {
-    throw new ApiError(400, "Administrator registration/login via Google is not allowed.");
-  }
+  const { credential, role } = req.validatedBody || req.body || {};
 
   const identity = await verifyGoogleIdToken(credential);
 
@@ -402,7 +398,7 @@ const googleAuth = catchAsync(async (req, res) => {
     if (role === "admin") {
       const isAllowedAdmin = env.adminEmails.includes(formattedEmail);
       if (!isAllowedAdmin) {
-        throw new ApiError(403, "You are not authorized to register as an administrator.");
+        throw new ApiError(403, "Administrator registration via Google is not allowed.");
       }
     }
 

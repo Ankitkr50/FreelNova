@@ -29,6 +29,7 @@ const verifyGoogleIdToken = async (credential) => {
       audience: env.googleClientId,
     });
   } catch (err) {
+    console.error("Google verify token error:", err?.message || err);
     throw new ApiError(400, "Google sign-in failed: invalid or expired credential. Please try again.");
   }
 

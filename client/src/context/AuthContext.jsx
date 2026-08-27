@@ -1,4 +1,5 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   clearAuthSession,
   getAccessToken,
@@ -12,6 +13,7 @@ import { subscriptionsApi } from "../api/subscriptions.api.js";
 export const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
+  const queryClient = useQueryClient();
   const [token, setToken] = useState(() => getAccessToken());
   const [refreshToken, setRefreshToken] = useState(() => getRefreshToken());
   const [user, setUser] = useState(() => getStoredUser());
@@ -89,6 +91,9 @@ export function AuthProvider({ children }) {
   }, [token, refreshToken]);
 
   const login = (nextToken, nextUser = null, nextRefreshToken = null) => {
+    try {
+      queryClient.clear();
+    } catch (e) {}
     setAuthSession({
       accessToken: nextToken,
       refreshToken: nextRefreshToken,
@@ -116,6 +121,9 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
+    try {
+      queryClient.clear();
+    } catch (e) {}
     clearAuthSession();
     localStorage.removeItem("sb_active_subscription");
     setActiveSubscription(null);
