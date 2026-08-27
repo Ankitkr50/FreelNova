@@ -110,7 +110,7 @@ async function resequenceUserPools() {
     const normalUsers = await prisma.user.findMany({
       where: { role: { not: "admin" } },
       orderBy: { createdAt: "asc" },
-      select: { id: true, userCode: true, username: true },
+      select: { id: true, email: true, userCode: true, username: true },
     });
 
     // Pass 1: Clear userCodes with short temporary prefix to avoid unique constraint collisions
@@ -138,11 +138,13 @@ async function resequenceUserPools() {
         normalUser.username.startsWith("TMP_UN_") ||
         normalUser.username === normalUser.userCode;
 
+      const emailFallback = normalUser.email ? normalUser.email.split("@")[0].toLowerCase().replace(/[^a-z0-9_-]/g, "") : null;
+
       await prisma.user.update({
         where: { id: normalUser.id },
         data: {
           userCode: targetCode,
-          username: isDefaultUsername ? null : normalUser.username,
+          username: isDefaultUsername ? (emailFallback || targetCode) : normalUser.username,
         },
       });
     }
