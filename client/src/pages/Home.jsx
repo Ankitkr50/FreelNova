@@ -1012,9 +1012,9 @@ function Home() {
           <h2 className="mt-4 text-[2.2rem] font-light leading-[1.08] tracking-[-0.04em] text-white md:text-[4.1rem]">
             Turn ideas into delivery with{" "}
             <span className="inline-flex items-end text-white select-none gap-0.5" style={{ fontFamily: "'Sora', sans-serif" }}>
-              <span className="font-bold text-black">Freel</span>
-              <span className="font-normal text-black -ml-0.5">Nova</span>
-              <span className="h-2 w-2 md:h-3.5 md:w-3.5 mb-1.5 md:mb-2.5 rounded-full bg-blue-600 shrink-0" />
+              <span className="font-bold text-white">Freel</span>
+              <span className="font-normal text-white -ml-0.5">Nova</span>
+              <span className="h-2 w-2 md:h-3.5 md:w-3.5 mb-1.5 md:mb-2.5 rounded-full bg-blue-400 shrink-0" />
             </span>
           </h2>
           <p className="mx-auto mt-5 max-w-3xl text-base leading-7 text-blue-50/90 md:text-lg">
