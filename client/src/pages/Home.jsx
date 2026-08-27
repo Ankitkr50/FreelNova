@@ -586,14 +586,14 @@ function Home() {
               Search for services, hire faster, and manage freelance work with a modern marketplace
               experience for students, recruiters, and growing teams.
             </p>
-            <div className="mt-8 flex w-full max-w-3xl flex-col gap-3 rounded-[1.75rem] border border-white/15 bg-white/14 p-3 shadow-[0_18px_50px_rgba(15,23,42,0.22)] backdrop-blur-md sm:mt-16 md:mt-24 sm:flex-row">
+            <div className="mt-8 flex w-full max-w-5xl flex-col gap-3 rounded-[1.75rem] border border-white/15 bg-white/14 p-3 shadow-[0_18px_50px_rgba(15,23,42,0.22)] backdrop-blur-md sm:mt-16 md:mt-24 sm:flex-row">
               <input
                 className="w-full flex-1 rounded-[1.25rem] border border-white/10 bg-white/92 px-5 py-4 text-base text-slate-900 outline-none placeholder:text-slate-500 focus:border-blue-400 focus:ring-4 focus:ring-blue-200"
                 placeholder="Search for any service..."
                 type="text"
               />
               <Link
-                className="inline-flex items-center justify-center rounded-[1.25rem] bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4 text-base font-semibold text-white shadow-[0_16px_30px_rgba(37,99,235,0.28)] transition hover:-translate-y-0.5 hover:brightness-[1.02] shrink-0"
+                className="inline-flex items-center justify-center rounded-[1.25rem] bg-gradient-to-r from-blue-500 to-blue-600 px-8 py-4 text-base font-semibold text-white shadow-[0_16px_30px_rgba(37,99,235,0.28)] transition hover:-translate-y-0.5 hover:brightness-[1.02] shrink-0"
                 to={ROUTES.PROJECTS}
               >
                 Search
