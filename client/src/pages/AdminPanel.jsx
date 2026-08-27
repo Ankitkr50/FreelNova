@@ -529,6 +529,7 @@ function AdminPanel() {
     }
   }, [activeTab]);
 
+  const reviewMutation = useMutation({
     mutationFn: async ({ rowId, action, username }) => {
       if (activeTab === "users") {
         if (action === "set_username") {
