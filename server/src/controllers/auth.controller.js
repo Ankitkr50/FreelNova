@@ -81,17 +81,13 @@ const register = catchAsync(async (req, res) => {
   const userCode = await generateNextUserCode(role || "freelancer");
   const otp = generateOtp();
   const hashedPassword = await bcrypt.hash(password, 10);
-  let user;
-  const emailUsername = formattedEmail ? formattedEmail.split("@")[0].toLowerCase().replace(/[^a-z0-9_-]/g, "") : null;
-  const finalUsername = formattedUsername || emailUsername;
-
   try {
     user = await prisma.user.create({
       data: {
         name,
         email: formattedEmail,
         userCode,
-        username: finalUsername,
+        username: formattedUsername || null,
         password: hashedPassword,
         role: role || "freelancer",
         isEmailVerified: false,
@@ -420,13 +416,12 @@ const googleAuth = catchAsync(async (req, res) => {
 
     const dummyPassword = await bcrypt.hash(`GoogleAuth!${identity.googleId.slice(-12)}aA1`, 10);
     const googleUserCode = await generateNextUserCode(role || "freelancer");
-    const googleEmailUsername = formattedEmail ? formattedEmail.split("@")[0].toLowerCase().replace(/[^a-z0-9_-]/g, "") : null;
     user = await prisma.user.create({
       data: {
         name: identity.name,
         email: formattedEmail,
         userCode: googleUserCode,
-        username: googleEmailUsername,
+        username: null,
         password: dummyPassword,
         role: role || "freelancer",
         authProvider: "google",

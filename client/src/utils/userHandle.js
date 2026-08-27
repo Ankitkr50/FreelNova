@@ -13,10 +13,6 @@ export function getDisplayUsername(user) {
     return user.username.replace(/^@/, "");
   }
 
-  if (user.email && user.email.includes("@")) {
-    return user.email.split("@")[0].toLowerCase().replace(/[^a-z0-9_-]/g, "");
-  }
-
   return "";
 }
 
