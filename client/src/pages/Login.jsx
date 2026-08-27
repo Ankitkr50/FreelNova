@@ -166,6 +166,14 @@ function Login() {
     },
   });
 
+  const resolveRedirectPath = (targetUser, fromPath) => {
+    if (targetUser?.role === "admin") return ROUTES.ADMIN;
+    if (fromPath && fromPath !== ROUTES.LOGIN && fromPath !== ROUTES.REGISTER && fromPath !== "/") {
+      return fromPath;
+    }
+    return ROUTES.DASHBOARD;
+  };
+
   const googleMutation = useMutation({
     mutationFn: authApi.googleAuth,
     onSuccess: (response) => {
@@ -176,7 +184,7 @@ function Login() {
       if (data.user && data.user.role !== "admin" && !data.user.profileCompleted) {
         navigate(ROUTES.COMPLETE_PROFILE, { replace: true });
       } else {
-        navigate(location.state?.from || ROUTES.DASHBOARD, { replace: true });
+        navigate(resolveRedirectPath(data.user, location.state?.from), { replace: true });
       }
     },
     onError: (error) => {
@@ -238,7 +246,7 @@ function Login() {
     if (cleanOtp === "123456") {
       login(pendingLogin.token, pendingLogin.user, pendingLogin.refreshToken);
       setStatus({ type: "success", text: pendingLogin.message || "Login successful. Redirecting..." });
-      navigate(location.state?.from || ROUTES.DASHBOARD, { replace: true });
+      navigate(resolveRedirectPath(pendingLogin?.user, location.state?.from), { replace: true });
       return;
     }
 
@@ -247,7 +255,7 @@ function Login() {
       await authApi.verifyEmail({ email: pendingLogin?.user?.email || form.email, otp: cleanOtp });
       login(pendingLogin.token, pendingLogin.user, pendingLogin.refreshToken);
       setStatus({ type: "success", text: "Login verified. Redirecting..." });
-      navigate(location.state?.from || ROUTES.DASHBOARD, { replace: true });
+      navigate(resolveRedirectPath(pendingLogin?.user, location.state?.from), { replace: true });
     } catch (err) {
       setStatus({
         type: "error",

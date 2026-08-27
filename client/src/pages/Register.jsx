@@ -192,7 +192,8 @@ function Register() {
     onSuccess: (response) => {
       const data = response?.data ?? {};
       login(data.accessToken, data.user, data.refreshToken);
-      navigate(ROUTES.DASHBOARD, { replace: true });
+      const target = data.user?.role === "admin" ? ROUTES.ADMIN : ROUTES.DASHBOARD;
+      navigate(target, { replace: true });
     },
     onError: (error) => {
       setStatus({

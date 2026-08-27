@@ -3,10 +3,11 @@ import { ROUTES } from "../constants/routes.js";
 import { useAuth } from "../hooks/useAuth.js";
 
 function PublicOnlyRoute() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   if (isAuthenticated) {
-    return <Navigate to={ROUTES.DASHBOARD} replace />;
+    const target = user?.role === "admin" ? ROUTES.ADMIN : ROUTES.DASHBOARD;
+    return <Navigate to={target} replace />;
   }
 
   return <Outlet />;
