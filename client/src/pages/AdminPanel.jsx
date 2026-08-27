@@ -1899,10 +1899,29 @@ function AdminPanel() {
                             {userDetails.user.username &&
                               userDetails.user.username.toUpperCase() !== userDetails.user.userCode?.toUpperCase() &&
                               !userDetails.user.username.toUpperCase().startsWith("FID") &&
-                              !userDetails.user.username.toUpperCase().startsWith("AID") && (
+                              !userDetails.user.username.toUpperCase().startsWith("AID") ? (
                                 <span className="text-xs font-semibold text-blue-600 bg-blue-50 border border-blue-150 px-2 py-0.5 rounded-full lowercase">
                                   @{userDetails.user.username}
                                 </span>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={async () => {
+                                    const newUn = window.prompt(`Set username for ${userDetails.user.name}:`, userDetails.user.username || "");
+                                    if (newUn !== null && newUn.trim()) {
+                                      try {
+                                        await adminApi.updateUserStatus(userDetails.user.id, { username: newUn.trim() });
+                                        queryClient.invalidateQueries({ queryKey: ["admin_user_details", userDetails.user.id] });
+                                        queryClient.invalidateQueries({ queryKey: ["admin"] });
+                                      } catch (e) {
+                                        alert(e?.response?.data?.message || "Failed to set username");
+                                      }
+                                    }
+                                  }}
+                                  className="text-[10px] font-bold text-blue-600 hover:bg-blue-100 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded-full cursor-pointer transition"
+                                >
+                                  + Set @Username
+                                </button>
                               )}
                             {userDetails.user.userCode && (
                               <span className="text-xs font-extrabold text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-0.5 rounded-full font-mono uppercase">
