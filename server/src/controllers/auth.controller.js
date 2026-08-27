@@ -46,11 +46,24 @@ const generateNextUserCode = async (role = "freelancer") => {
 };
 
 const register = catchAsync(async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, username } = req.body;
   const formattedEmail = String(email).toLowerCase().trim();
+  const formattedUsername = username ? String(username).toLowerCase().trim().replace(/^@/, "") : null;
 
   if (role === "admin" && formattedEmail !== "fn.freelnova@gmail.com") {
     throw new ApiError(400, "Write the correct email");
+  }
+
+  if (formattedUsername) {
+    if (!/^[a-z0-9_-]{3,30}$/.test(formattedUsername)) {
+      throw new ApiError(400, "Username must be 3-30 characters long and contain only lowercase letters, numbers, underscores, or hyphens.");
+    }
+    const existingUsername = await prisma.user.findFirst({
+      where: { username: { equals: formattedUsername, mode: "insensitive" } },
+    });
+    if (existingUsername) {
+      throw new ApiError(409, "Username is already taken by another user");
+    }
   }
 
   const existingUser = await prisma.user.findUnique({
@@ -65,6 +78,7 @@ const register = catchAsync(async (req, res) => {
     await prisma.user.delete({ where: { id: existingUser.id } });
   }
 
+  const userCode = await generateNextUserCode(role || "freelancer");
   const otp = generateOtp();
   const hashedPassword = await bcrypt.hash(password, 10);
   let user;
@@ -74,7 +88,7 @@ const register = catchAsync(async (req, res) => {
         name,
         email: formattedEmail,
         userCode,
-        username: userCode,
+        username: formattedUsername || null,
         password: hashedPassword,
         role: role || "freelancer",
         isEmailVerified: false,
@@ -408,7 +422,7 @@ const googleAuth = catchAsync(async (req, res) => {
         name: identity.name,
         email: formattedEmail,
         userCode: googleUserCode,
-        username: googleUserCode,
+        username: null,
         password: dummyPassword,
         role: role || "freelancer",
         authProvider: "google",

@@ -142,7 +142,7 @@ async function resequenceUserPools() {
         where: { id: normalUser.id },
         data: {
           userCode: targetCode,
-          username: isDefaultUsername ? targetCode : normalUser.username,
+          username: isDefaultUsername ? null : normalUser.username,
         },
       });
     }

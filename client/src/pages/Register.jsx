@@ -102,6 +102,7 @@ function Register() {
   const [form, setForm] = useState({
     fullName: "",
     email: "",
+    username: "",
     password: "",
     confirmPassword: "",
     role: defaultRole,
@@ -235,6 +236,13 @@ function Register() {
       nextErrors.email = "Enter a valid email address.";
     }
 
+    if (form.username && form.username.trim()) {
+      const cleanUn = form.username.trim().replace(/^@/, "");
+      if (!/^[a-zA-Z0-9_-]{3,30}$/.test(cleanUn)) {
+        nextErrors.username = "Username must be 3-30 letters, numbers, underscores, or hyphens.";
+      }
+    }
+
     if (!form.password) {
       nextErrors.password = "Password is required.";
     } else if (!strongPasswordRegex.test(form.password)) {
@@ -268,6 +276,7 @@ function Register() {
     registerMutation.mutate({
       fullName: form.fullName,
       email: form.email,
+      username: form.username ? form.username.trim() : undefined,
       password: form.password,
       role: form.role,
     });
@@ -437,6 +446,22 @@ function Register() {
             value={form.email}
           />
           {errors.email ? <p className="text-xs text-rose-600">{errors.email}</p> : null}
+        </div>
+
+        <div className="space-y-1.5">
+          <label className="block text-xs font-semibold text-slate-700" htmlFor="username">
+            Username <span className="text-slate-400 font-normal">(Optional, e.g. @ankit_dev)</span>
+          </label>
+          <input
+            className="w-full rounded-2xl border border-blue-100 bg-blue-50/60 px-4 py-2.5 text-slate-900 text-sm outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100"
+            disabled={isBusy}
+            id="username"
+            onChange={(event) => updateField("username", event.target.value)}
+            placeholder="ankit_dev"
+            type="text"
+            value={form.username}
+          />
+          {errors.username ? <p className="text-xs text-rose-600">{errors.username}</p> : null}
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">

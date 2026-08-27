@@ -142,7 +142,10 @@ const updateProfile = catchAsync(async (req, res) => {
       where: { id: userId },
       select: { username: true, profileCompleted: true }
     });
-    if (currentUserRecord?.profileCompleted && currentUserRecord?.username) {
+    const isRealUsername = currentUserRecord?.username && 
+      !currentUserRecord.username.toUpperCase().startsWith("FID") && 
+      !currentUserRecord.username.toUpperCase().startsWith("AID");
+    if (currentUserRecord?.profileCompleted && isRealUsername) {
       if (currentUserRecord.username === cleanUsername) {
         delete updates.username;
       } else {
@@ -351,7 +354,10 @@ const completeProfile = catchAsync(async (req, res) => {
 
   if (updates.username) {
     const cleanUsername = updates.username.toLowerCase().trim();
-    if (existingUser.profileCompleted && existingUser.username) {
+    const isRealUsername = existingUser?.username && 
+      !existingUser.username.toUpperCase().startsWith("FID") && 
+      !existingUser.username.toUpperCase().startsWith("AID");
+    if (existingUser.profileCompleted && isRealUsername) {
       if (existingUser.username === cleanUsername) {
         delete updates.username;
       } else {

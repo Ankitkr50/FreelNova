@@ -23,6 +23,7 @@ export const authApi = {
     http.post("/auth/register", {
       name: payload.fullName || payload.name,
       email: payload.email,
+      username: payload.username,
       password: payload.password,
       role: payload.role,
     }),

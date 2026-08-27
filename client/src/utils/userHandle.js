@@ -3,25 +3,17 @@
  */
 
 export function getDisplayUsername(user) {
-  if (!user) return "user";
+  if (!user) return "";
 
   if (user.email === "fn.freelnova@gmail.com" || user.role === "admin") {
-    return "admin_freelnova";
+    return user.username || "admin_freelnova";
   }
 
-  if (user.username && !user.username.includes("@")) {
-    return user.username;
+  if (user.username && !user.username.toUpperCase().startsWith("FID") && !user.username.toUpperCase().startsWith("AID")) {
+    return user.username.replace(/^@/, "");
   }
 
-  if (user.username && user.username.includes("@")) {
-    return user.username.split("@")[0];
-  }
-
-  if (user.email && user.email.includes("@")) {
-    return user.email.split("@")[0];
-  }
-
-  return user.name ? user.name.toLowerCase().replace(/\s+/g, "") : "user";
+  return "";
 }
 
 export function getDisplayUserCode(user) {
