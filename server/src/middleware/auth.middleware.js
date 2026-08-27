@@ -45,7 +45,7 @@ const protect = catchAsync(async (req, res, next) => {
     if (error.name === "TokenExpiredError") {
       throw new ApiError(401, "Access token expired");
     }
-    throw new ApiError(401, "Invalid access token");
+    throw new ApiError(401, `Invalid access token: ${error.message}`);
   }
 
   const userId = decoded.sub;
@@ -59,7 +59,7 @@ const protect = catchAsync(async (req, res, next) => {
       where: { id: userId },
     });
     if (!user) {
-      throw new ApiError(401, "User not found");
+      throw new ApiError(401, "User not found in database");
     }
     delete user.password; // remove sensitive field before caching
     await userCache.set(userId, user);

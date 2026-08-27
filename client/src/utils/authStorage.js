@@ -3,11 +3,15 @@ export const REFRESH_TOKEN_KEY = "freelnova_refresh_token";
 export const USER_KEY = "freelnova_user";
 
 export function getAccessToken() {
-  return localStorage.getItem(TOKEN_KEY);
+  const val = localStorage.getItem(TOKEN_KEY);
+  if (!val || val === "null" || val === "undefined") return null;
+  return val;
 }
 
 export function getRefreshToken() {
-  return localStorage.getItem(REFRESH_TOKEN_KEY);
+  const val = localStorage.getItem(REFRESH_TOKEN_KEY);
+  if (!val || val === "null" || val === "undefined") return null;
+  return val;
 }
 
 export function getStoredUser() {

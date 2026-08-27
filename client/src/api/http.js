@@ -14,7 +14,12 @@ http.interceptors.request.use((config) => {
   const token = getAccessToken();
 
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    if (config.headers && typeof config.headers.set === "function") {
+      config.headers.set("Authorization", `Bearer ${token}`);
+    } else {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
 
   // Prevent double /api/api/ pathing if config.url starts with /api/
