@@ -138,7 +138,7 @@ const adminUpdateUserStatus = catchAsync(async (req, res) => {
     throw new ApiError(400, "Invalid user id");
   }
 
-  const { moderationStatus, moderationNote, isVerified, fineAmount, fineStatus, fineReason } = req.body || {};
+  const { moderationStatus, moderationNote, isVerified, fineAmount, fineStatus, fineReason, username } = req.body || {};
   const updateData = {};
   if (moderationStatus !== undefined) updateData.moderationStatus = moderationStatus;
   if (moderationNote !== undefined) updateData.moderationNote = moderationNote;
@@ -146,6 +146,27 @@ const adminUpdateUserStatus = catchAsync(async (req, res) => {
   if (fineAmount !== undefined) updateData.fineAmount = Number(fineAmount) || 0;
   if (fineStatus !== undefined) updateData.fineStatus = fineStatus;
   if (fineReason !== undefined) updateData.fineReason = fineReason;
+
+  if (username !== undefined) {
+    const formattedUsername = username ? String(username).toLowerCase().trim().replace(/^@/, "") : null;
+    if (formattedUsername) {
+      if (!/^[a-z0-9_-]{3,30}$/.test(formattedUsername)) {
+        throw new ApiError(400, "Username must be 3-30 characters long and contain only lowercase letters, numbers, underscores, or hyphens.");
+      }
+      const existingUsername = await prisma.user.findFirst({
+        where: {
+          username: { equals: formattedUsername, mode: "insensitive" },
+          id: { not: id },
+        },
+      });
+      if (existingUsername) {
+        throw new ApiError(409, "Username is already taken by another user");
+      }
+      updateData.username = formattedUsername;
+    } else {
+      updateData.username = null;
+    }
+  }
 
   updateData.moderatedBy = adminUserId;
   updateData.moderatedAt = new Date();

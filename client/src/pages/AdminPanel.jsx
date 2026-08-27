@@ -529,9 +529,11 @@ function AdminPanel() {
     }
   }, [activeTab]);
 
-  const reviewMutation = useMutation({
-    mutationFn: async ({ rowId, action }) => {
+    mutationFn: async ({ rowId, action, username }) => {
       if (activeTab === "users") {
+        if (action === "set_username") {
+          return adminApi.updateUserStatus(rowId, { username });
+        }
         if (action === "verify") {
           return adminApi.updateUserStatus(rowId, {
             isVerified: true,
@@ -630,7 +632,7 @@ function AdminPanel() {
     setFilterByDate(false);
   };
 
-  const handleAction = (action, rowId) => {
+  const handleAction = (action, rowId, extraData = {}) => {
     if (action === "view") {
       if (activeTab === "users") {
         setSelectedDetailUserId(rowId);
@@ -650,7 +652,7 @@ function AdminPanel() {
       }
       return;
     }
-    reviewMutation.mutate({ action, rowId });
+    reviewMutation.mutate({ action, rowId, ...extraData });
   };
 
   if (role !== "admin") {
@@ -1790,6 +1792,20 @@ function AdminPanel() {
                             {activeTab === "users" && (row.status !== "active" || row.fineStatus === "PENDING") && (
                               <button className="rounded-md border border-emerald-300 px-2 py-1 text-xs text-emerald-700 hover:bg-emerald-50 font-bold" onClick={() => handleAction("unblock", row.id)} type="button">
                                 Unblock / Waive
+                              </button>
+                            )}
+                            {activeTab === "users" && (
+                              <button
+                                className="rounded-md border border-blue-300 bg-blue-50 px-2 py-1 text-xs text-blue-700 hover:bg-blue-100 font-semibold cursor-pointer"
+                                onClick={() => {
+                                  const un = window.prompt(`Set username for ${row.name}:`, row.username || "");
+                                  if (un !== null && un.trim()) {
+                                    handleAction("set_username", row.id, { username: un.trim() });
+                                  }
+                                }}
+                                type="button"
+                              >
+                                {row.username ? "Edit @Username" : "+ @Username"}
                               </button>
                             )}
                             {activeTab === "users" && (
