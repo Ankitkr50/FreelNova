@@ -57,7 +57,9 @@ http.interceptors.response.use(
     }
 
     if (!refreshToken) {
-      clearAuthSession();
+      if (accessToken) {
+        clearAuthSession();
+      }
       return Promise.reject(error);
     }
 
@@ -82,7 +84,10 @@ http.interceptors.response.use(
           return nextAccessToken;
         })
         .catch((refreshError) => {
-          clearAuthSession();
+          const activeRefreshToken = getRefreshToken();
+          if (!activeRefreshToken || activeRefreshToken === refreshToken) {
+            clearAuthSession();
+          }
           throw refreshError;
         })
         .finally(() => {
