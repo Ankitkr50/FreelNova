@@ -992,33 +992,33 @@ function AdminPanel() {
 
       {/* SVG Interactive Trend Graph */}
       {!intelLoading && intel?.metrics && (
-        <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="mt-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm overflow-hidden">
           <h3 className="text-sm font-bold text-slate-900 mb-4">Financial Turnover & Revenue Growth Trend</h3>
-          <div className="w-full h-40">
-            <svg className="w-full h-full" viewBox="0 0 600 150" preserveAspectRatio="none">
+          <div className="w-full h-40 overflow-hidden relative">
+            <svg className="w-full h-full block" viewBox="0 0 600 120" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="turnoverGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor="#2563eb" stopOpacity="0.2" />
                   <stop offset="100%" stopColor="#2563eb" stopOpacity="0.0" />
                 </linearGradient>
               </defs>
-              <line x1="0" y1="30" x2="600" y2="30" stroke="#f1f5f9" strokeWidth="1" />
-              <line x1="0" y1="75" x2="600" y2="75" stroke="#f1f5f9" strokeWidth="1" />
-              <line x1="0" y1="120" x2="600" y2="120" stroke="#f1f5f9" strokeWidth="1" />
+              <line x1="0" y1="20" x2="600" y2="20" stroke="#f1f5f9" strokeWidth="1" />
+              <line x1="0" y1="60" x2="600" y2="60" stroke="#f1f5f9" strokeWidth="1" />
+              <line x1="0" y1="100" x2="600" y2="100" stroke="#f1f5f9" strokeWidth="1" />
 
               <path
-                d={`M 0,130 Q 120,${130 - (intel.metrics.totalTurnover ? 30 : 0)} 240,${130 - (intel.metrics.totalTurnover ? 50 : 0)} T 480,${130 - (intel.metrics.totalTurnover ? 85 : 0)} T 600,${130 - (intel.metrics.totalTurnover ? 110 : 0)}`}
+                d={`M 0,100 Q 120,${100 - (intel.metrics.totalTurnover ? 25 : 0)} 240,${100 - (intel.metrics.totalTurnover ? 40 : 0)} T 480,${100 - (intel.metrics.totalTurnover ? 65 : 0)} T 600,${100 - (intel.metrics.totalTurnover ? 85 : 0)}`}
                 fill="none"
                 stroke="#2563eb"
                 strokeWidth="3"
               />
               <path
-                d={`M 0,130 Q 120,${130 - (intel.metrics.totalTurnover ? 30 : 0)} 240,${130 - (intel.metrics.totalTurnover ? 50 : 0)} T 480,${130 - (intel.metrics.totalTurnover ? 85 : 0)} T 600,${130 - (intel.metrics.totalTurnover ? 110 : 0)} L 600,150 L 0,150 Z`}
+                d={`M 0,100 Q 120,${100 - (intel.metrics.totalTurnover ? 25 : 0)} 240,${100 - (intel.metrics.totalTurnover ? 40 : 0)} T 480,${100 - (intel.metrics.totalTurnover ? 65 : 0)} T 600,${100 - (intel.metrics.totalTurnover ? 85 : 0)} L 600,120 L 0,120 Z`}
                 fill="url(#turnoverGrad)"
               />
 
               <path
-                d={`M 0,140 Q 120,${140 - (intel.metrics.platformRevenue ? 10 : 0)} 240,${140 - (intel.metrics.platformRevenue ? 20 : 0)} T 480,${140 - (intel.metrics.platformRevenue ? 35 : 0)} T 600,${140 - (intel.metrics.platformRevenue ? 50 : 0)}`}
+                d={`M 0,105 Q 120,${105 - (intel.metrics.platformRevenue ? 10 : 0)} 240,${105 - (intel.metrics.platformRevenue ? 15 : 0)} T 480,${105 - (intel.metrics.platformRevenue ? 25 : 0)} T 600,${105 - (intel.metrics.platformRevenue ? 35 : 0)}`}
                 fill="none"
                 stroke="#10b981"
                 strokeWidth="2.5"
