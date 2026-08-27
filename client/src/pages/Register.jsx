@@ -189,6 +189,8 @@ function Register() {
 
   const googleMutation = useMutation({
     mutationFn: authApi.googleAuth,
+    retry: 2,
+    retryDelay: 1500,
     onSuccess: (response) => {
       const data = response?.data ?? {};
       login(data.accessToken, data.user, data.refreshToken);
