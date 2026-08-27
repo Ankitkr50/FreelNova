@@ -170,6 +170,9 @@ function Login() {
     mutationFn: authApi.googleAuth,
     onSuccess: (response) => {
       const data = response?.data ?? {};
+      if (data.accessToken && data.user) {
+        login(data.accessToken, data.user, data.refreshToken);
+      }
       if (data.user && data.user.role !== "admin" && !data.user.profileCompleted) {
         navigate(ROUTES.COMPLETE_PROFILE, { replace: true });
       } else {

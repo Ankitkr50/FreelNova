@@ -398,14 +398,6 @@ const googleAuth = catchAsync(async (req, res) => {
     }
   });
 
-  if (!user && !isRegister) {
-    throw new ApiError(404, "No account found. Please register first.");
-  }
-
-  if (user && isRegister && role && user.role !== role) {
-    throw new ApiError(400, `Registered as ${user.role}. Please select ${user.role}.`);
-  }
-
   if (!user) {
     if (role === "admin") {
       const isAllowedAdmin = env.adminEmails.includes(formattedEmail);
