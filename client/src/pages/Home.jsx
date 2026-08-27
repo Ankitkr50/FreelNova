@@ -586,14 +586,14 @@ function Home() {
               Search for services, hire faster, and manage freelance work with a modern marketplace
               experience for students, recruiters, and growing teams.
             </p>
-            <div className="mt-8 flex w-full max-w-3xl flex-col gap-2.5 rounded-[1.5rem] border border-white/15 bg-white/14 p-2.5 shadow-[0_18px_50px_rgba(15,23,42,0.22)] backdrop-blur-md sm:mt-12 sm:flex-row sm:rounded-[1.75rem] sm:p-3">
+            <div className="mt-8 flex w-full max-w-4xl flex-col gap-2.5 rounded-[1.5rem] border border-white/15 bg-white/14 p-2.5 shadow-[0_18px_50px_rgba(15,23,42,0.22)] backdrop-blur-md sm:mt-12 sm:flex-row sm:rounded-[1.75rem] sm:p-3">
               <input
                 className="w-full flex-1 rounded-[1.1rem] border border-white/10 bg-white/92 px-4 py-3 text-sm text-slate-900 outline-none placeholder:text-slate-500 focus:border-blue-400 focus:ring-4 focus:ring-blue-200 sm:rounded-[1.25rem] sm:px-5 sm:py-4 sm:text-base"
                 placeholder="Search for any service..."
                 type="text"
               />
               <Link
-                className="inline-flex items-center justify-center rounded-[1.1rem] bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgba(37,99,235,0.28)] transition hover:-translate-y-0.5 hover:brightness-[1.02] sm:rounded-[1.25rem] sm:py-4 sm:text-base shrink-0"
+                className="inline-flex items-center justify-center rounded-[1.1rem] bg-gradient-to-r from-blue-500 to-blue-600 px-8 py-3 text-sm font-semibold text-white shadow-[0_16px_30px_rgba(37,99,235,0.28)] transition hover:-translate-y-0.5 hover:brightness-[1.02] sm:rounded-[1.25rem] sm:py-4 sm:text-base shrink-0"
                 to={ROUTES.PROJECTS}
               >
                 Search

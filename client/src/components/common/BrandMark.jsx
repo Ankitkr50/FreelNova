@@ -3,11 +3,12 @@ import { ROUTES } from "../../constants/routes.js";
 
 function BrandMark({ compact = false, className = "" }) {
   const targetRoute = ROUTES.HOME || "/";
+  const marginClass = compact ? "ml-0 md:-ml-8" : "ml-0 md:-ml-11";
 
   return (
     <Link
       to={targetRoute}
-      className={`inline-flex items-center select-none ${className}`.trim()}
+      className={`inline-flex items-center select-none ${marginClass} ${className}`.trim()}
     >
       <span
         className={`${compact ? "text-[1.85rem] tracking-tight" : "text-5xl tracking-tighter"

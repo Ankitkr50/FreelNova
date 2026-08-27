@@ -305,9 +305,9 @@ function Navbar() {
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/95 backdrop-blur">
       <Container className="py-2">
         <div className="flex items-center justify-between gap-4">
-          <div className="hidden min-w-0 items-center gap-1.5 md:flex md:flex-none">
+          <div className="hidden min-w-0 items-center gap-1.5 md:flex md:flex-1 max-w-2xl">
             <BrandMark className="flex-shrink-0" compact />
-            <form className="ml-4 flex w-[24rem] items-center gap-2" onSubmit={handleSearchSubmit}>
+            <form className="ml-4 flex w-full items-center gap-2" onSubmit={handleSearchSubmit}>
               <input
                 className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100"
                 onChange={(event) => setSearch(event.target.value)}
@@ -316,7 +316,7 @@ function Navbar() {
                 value={search}
               />
               <button
-                className="rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 shadow-sm"
+                className="rounded-2xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 shadow-sm shrink-0"
                 type="submit"
               >
                 Search
